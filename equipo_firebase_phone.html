@@ -9,12 +9,17 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-<!-- Chart.js para gráficas -->
+<!-- Chart.js para gráficas si se necesitan estadísticas -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Google Calendar Lite para visualizar asistencia -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
 
 <!-- Estilos modernos y juveniles -->
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+/* ===================== General ===================== */
 body { font-family: 'Quicksand', sans-serif; background:#f0f8f5; margin:0; padding:0; }
 header { background:#2e7d32; color:white; padding:20px; text-align:center; font-size:1.6em; font-weight:600; }
 .container { max-width:1200px; margin:20px auto; padding:20px; background:white; border-radius:12px; box-shadow:0 6px 15px rgba(0,0,0,0.1); }
@@ -23,14 +28,13 @@ button:hover { background:#1b5e20; }
 input, select { padding:8px; margin:6px 0; border-radius:6px; border:1px solid #ccc; font-size:0.95em; }
 .card { background:white; border:1px solid #ddd; border-radius:10px; padding:15px; margin:10px; box-shadow:0 4px 8px rgba(0,0,0,0.05); cursor:pointer; transition:0.3s; }
 .card:hover { box-shadow:0 6px 12px rgba(0,0,0,0.1); }
-.card .info { flex:1; }
-.card .actions { text-align:right; }
-.card canvas { margin-top:10px; max-width:200px; }
+.card .info { flex:1; display:flex; justify-content: space-between; align-items:center; }
 .tabs { margin:10px 0; }
 .tabs button { background:#d0f0e0; color:#2e7d32; }
 .tabs button.active { background:#2e7d32; color:white; }
-.stats { font-size:0.9em; color:#555; }
 .player-details { display:none; margin-top:10px; background:#f7fff7; padding:10px; border-radius:8px; }
+.attendance-buttons button { margin-right:5px; }
+.calendar { max-width:100%; margin-top:10px; }
 </style>
 </head>
 <body>
@@ -39,7 +43,7 @@ input, select { padding:8px; margin:6px 0; border-radius:6px; border:1px solid #
 </header>
 <div class="container">
 
-<!-- Registro / Login -->
+<!-- ===================== Registro / Login ===================== -->
 <div id="authBox">
   <h2>Registro / Login Entrenadores</h2>
   <input type="email" id="email" placeholder="Email"><br>
@@ -49,7 +53,7 @@ input, select { padding:8px; margin:6px 0; border-radius:6px; border:1px solid #
   <p id="authMsg"></p>
 </div>
 
-<!-- Área admin -->
+<!-- ===================== Área admin ===================== -->
 <div>
   <h2>Área de Administración</h2>
   <input type="password" id="adminPassword" placeholder="Contraseña maestra">
@@ -60,9 +64,10 @@ input, select { padding:8px; margin:6px 0; border-radius:6px; border:1px solid #
   </div>
 </div>
 
-<!-- Filtrar por categoría -->
+<!-- ===================== Gestión de Jugadores ===================== -->
 <div id="app" style="display:none;">
   <h2>Gestión de Jugadores</h2>
+  <!-- Filtros de categorías -->
   <div class="tabs">
     <button class="tabBtn active" onclick="filterCategory('M14')">M14</button>
     <button class="tabBtn" onclick="filterCategory('M16')">M16</button>
@@ -70,6 +75,7 @@ input, select { padding:8px; margin:6px 0; border-radius:6px; border:1px solid #
     <button class="tabBtn" onclick="filterCategory('all')">Todos</button>
   </div>
 
+  <!-- Formulario de nuevo jugador -->
   <div>
     <input type="text" id="playerName" placeholder="Nombre completo">
     <input type="date" id="playerBirth">
@@ -85,10 +91,12 @@ input, select { padding:8px; margin:6px 0; border-radius:6px; border:1px solid #
     <button onclick="addPlayer()">➕ Añadir jugador</button>
   </div>
 
+  <!-- Contenedor de jugadores -->
   <div id="playersContainer"></div>
 </div>
 
 <script>
+/* ===================== Firebase Config ===================== */
 const firebaseConfig = {
   apiKey: "AIzaSyC-DTX0x8Bebk6Z1TEkyyVD3K4jOPVSmLA",
   authDomain: "control-jugadores-64ae6.firebaseapp.com",
@@ -99,12 +107,14 @@ const firebaseConfig = {
   appId: "1:345003884874:web:51308a576a636b5a9741b3",
   measurementId: "G-1RR2CLEPL1"
 };
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const auth = firebase.auth();
 const MASTER_PASSWORD = '123123';
 let currentCategory = 'all';
 
+/* ===================== Registro y Login ===================== */
 function register(){
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
@@ -132,6 +142,7 @@ auth.onAuthStateChanged(user=>{
   }
 });
 
+/* ===================== Área Admin ===================== */
 function showAdmin(){
   const pass = document.getElementById('adminPassword').value;
   if(pass!==MASTER_PASSWORD){alert('Contraseña incorrecta'); return;}
@@ -153,11 +164,9 @@ function loadRequests(){
     });
   });
 }
+function approveUser(uid){ db.ref('users/'+uid+'/status').set('aprobado'); }
 
-function approveUser(uid){
-  db.ref('users/'+uid+'/status').set('aprobado');
-}
-
+/* ===================== Gestión de Jugadores ===================== */
 function addPlayer(){
   const name = document.getElementById('playerName').value;
   const birth = document.getElementById('playerBirth').value;
@@ -182,38 +191,70 @@ function loadPlayers(){
       if(currentCategory==='all' || p.category===currentCategory){
         const div = document.createElement('div');
         div.className='card';
-        div.innerHTML=`<div class='info'><strong>${p.name}</strong> <button onclick='toggleDetails("${id}")'>Ver / Editar</button>
+        div.innerHTML=`
+          <div class='info'>
+            <strong>${p.name}</strong>
+            <div class='attendance-buttons'>
+              <button onclick='markAttendance("${id}",true)'>✅ Asistencia</button>
+              <button onclick='markAttendance("${id}",false)'>❌ No asistencia</button>
+            </div>
+            <button onclick='toggleDetails("${id}")'>Ver / Editar</button>
+          </div>
           <div class='player-details' id='details_${id}'>
             Nacimiento: <input value='${p.birth}' onchange='updateField("${id}","birth",this.value)'><br>
             Padre: <input value='${p.fatherName}' onchange='updateField("${id}","fatherName",this.value)'> (<input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this.value)'>)<br>
             Madre: <input value='${p.motherName}' onchange='updateField("${id}","motherName",this.value)'> (<input value='${p.motherPhone}' onchange='updateField("${id}","motherPhone",this.value)'>)<br>
+            <div id='calendar_${id}' class='calendar'></div>
             <button onclick='deletePlayer("${id}")'>🗑️ Borrar jugador</button>
-          </div></div>`;
+          </div>
+        `;
         container.appendChild(div);
+        renderCalendar(id,p.attendance);
       }
     });
   });
 }
 
+/* ===================== Funciones de asistencia ===================== */
+function markAttendance(id,presente){
+  const today = new Date().toISOString().slice(0,10);
+  db.ref('players/'+id+'/attendance/'+today).set(presente);
+}
+
+/* ===================== Renderizar calendario ===================== */
+function renderCalendar(id,attendance){
+  const calendarEl = document.getElementById('calendar_'+id);
+  calendarEl.innerHTML=''; // Limpiar
+  const events = [];
+  for(const date in attendance){
+    events.push({title:attendance[date]? '✅':'❌', start:date, color:attendance[date]? 'green':'red'});
+  }
+  const calendar = new FullCalendar.Calendar(calendarEl,{
+    initialView: 'dayGridMonth',
+    events: events
+  });
+  calendar.render();
+}
+
+/* ===================== Editar y borrar ===================== */
 function toggleDetails(id){
   const el = document.getElementById('details_'+id);
   el.style.display = (el.style.display==='none')?'block':'none';
 }
-
 function updateField(id,field,value){
   db.ref('players/'+id+'/'+field).set(value);
 }
-
 function deletePlayer(id){
   if(confirm('¿Seguro que quieres borrar este jugador?')){
     db.ref('players/'+id).remove();
   }
 }
 
+/* ===================== Filtrar por categoría ===================== */
 function filterCategory(cat){
   currentCategory=cat;
   document.querySelectorAll('.tabBtn').forEach(btn=>btn.classList.remove('active'));
-  Array.from(document.querySelectorAll('.tabBtn')).find(b=>b.textContent===cat || cat==='all').classList.add('active');
+  Array.from(document.querySelectorAll('.tabBtn')).find(b=>b.textContent===cat || cat==='Todos').classList.add('active');
   loadPlayers();
 }
 </script>
