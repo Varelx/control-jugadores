@@ -37,8 +37,8 @@ th { background:#d0f0e0; }
 </head>
 <body>
 <header>
-  <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Club_Rugby_Zalaeta_Logo.png" alt="Club Rugby Zalaeta">
-  <h1>🏉 Entrenadores CDZ</h1>
+  <img src="blob:https://web.whatsapp.com/43450830-da6b-43f1-b7b2-4516599d1aba" alt="Club Rugby Zalaeta">
+  <h1>Entrenadores CDZ</h1>
   <!-- Contenedor del menú oculto por defecto -->
   <div id="menuContainer" style="display:none; margin-left:auto;">
     <select id="menuSelect" onchange="switchView()">
@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderAttendanceTable(id, attendance){
     const table = document.getElementById('attendance_'+id);
-    table.innerHTML = '<tr><th>Fecha</th><th>Asistencia</th></tr>';
+    table.innerHTML = '<tr><th>Fecha entrenamiento</th><th>Asistencia</th></tr>';
     for(const date in attendance){
       const tr = document.createElement('tr');
       tr.innerHTML = `<td>${date}</td><td>${attendance[date] ? '✅' : '❌'}</td>`;
