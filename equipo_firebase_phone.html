@@ -39,24 +39,24 @@ input, select { padding:8px; margin:6px 0; border-radius:6px; border:1px solid #
 </head>
 <body>
 <header>
-  <h1>🏀 Control de Jugadores</h1>
+  <h1>🏉 CDZ Checking</h1>
 </header>
 <div class="container">
 
 <!-- ===================== Registro / Login ===================== -->
 <div id="authBox">
-  <h2>Registro / Login Entrenadores</h2>
+  <h2>Entrenadores</h2>
   <input type="email" id="email" placeholder="Email"><br>
   <input type="password" id="password" placeholder="Contraseña"><br>
-  <button onclick="register()">Registrarse</button>
   <button onclick="login()">Iniciar sesión</button>
+  <button onclick="register()">Registrarse</button>
   <p id="authMsg"></p>
 </div>
 
 <!-- ===================== Área admin ===================== -->
 <div>
   <h2>Área de Administración</h2>
-  <input type="password" id="adminPassword" placeholder="Contraseña maestra">
+  <input type="password" id="adminPassword" placeholder="Contraseña"><br>
   <button onclick="showAdmin()">Acceder</button>
   <div id="adminArea" style="display:none; margin-top:10px;">
     <h3>Solicitudes pendientes</h3>
