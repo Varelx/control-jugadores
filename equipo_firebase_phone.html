@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
 <title>🏉 Entrenadores CDZ</title>
 
 <!-- Firebase -->
@@ -17,30 +17,30 @@
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 body { font-family: 'Quicksand', sans-serif; background:#f0f8f5; margin:0; padding:0; }
-header { display:flex; align-items:center; background:#2e7d32; color:white; padding:10px 20px; flex-wrap: wrap; }
+header { display:flex; align-items:center; background:#2e7d32; color:white; padding:10px 20px; flex-wrap:wrap; }
 header img { height:50px; margin-right:20px; }
-header h1 { font-size:1.6em; font-weight:600; margin:0; flex:1; }
+header h1 { font-size:1.6em; font-weight:600; margin:0; flex-grow:1; }
 #menuContainer { margin-left:auto; }
-.container { max-width:1200px; width:90%; margin:20px auto; padding:20px; background:white; border-radius:12px; box-shadow:0 6px 15px rgba(0,0,0,0.1); }
-button { padding:10px 16px; border:none; border-radius:8px; background:#2e7d32; color:white; cursor:pointer; margin:2px 0; transition:0.3s; font-weight:500; }
+.container { max-width:1200px; margin:20px auto; padding:20px; background:white; border-radius:12px; box-shadow:0 6px 15px rgba(0,0,0,0.1); }
+button { padding:10px 16px; border:none; border-radius:8px; background:#2e7d32; color:white; cursor:pointer; margin:2px; transition:0.3s; font-weight:500; }
 button:hover { background:#1b5e20; }
 input, select { padding:8px; margin:6px 0; border-radius:6px; border:1px solid #ccc; font-size:0.95em; width:100%; box-sizing:border-box; }
 .card { background:white; border:1px solid #ddd; border-radius:10px; padding:15px; margin:10px 0; box-shadow:0 4px 8px rgba(0,0,0,0.05); cursor:pointer; transition:0.3s; }
 .card:hover { box-shadow:0 6px 12px rgba(0,0,0,0.1); }
 .tabs { margin:10px 0; display:flex; flex-wrap:wrap; gap:5px; }
-.tabs button { background:#d0f0e0; color:#2e7d32; flex:1; min-width:60px; }
+.tabs button { flex:1; background:#d0f0e0; color:#2e7d32; }
 .tabs button.active { background:#2e7d32; color:white; }
-.player-details { display:none; margin-top:10px; background:#f7fff7; padding:10px; border-radius:8px; overflow-x:auto; }
-.attendance-buttons button { margin-right:5px; margin-bottom:5px; }
-table { width:100%; border-collapse:collapse; margin-top:10px; display:block; overflow-x:auto; }
-th, td { border:1px solid #ccc; padding:6px 10px; text-align:center; white-space:nowrap; }
+.player-details { display:none; margin-top:10px; background:#f7fff7; padding:10px; border-radius:8px; }
+.attendance-buttons { display:flex; flex-wrap:wrap; gap:5px; margin:5px 0; }
+.attendance-buttons button { flex:1; }
+table { width:100%; border-collapse:collapse; margin-top:10px; }
+th, td { border:1px solid #ccc; padding:6px 10px; text-align:center; font-size:0.9em; }
 th { background:#d0f0e0; }
-
-/* Media queries para móviles */
 @media (max-width:768px) {
-  header { flex-direction: column; align-items:flex-start; }
-  header img { margin-bottom:10px; }
-  .tabs { flex-direction: column; }
+  header { flex-direction:column; align-items:flex-start; }
+  header h1 { margin:10px 0 0 0; }
+  .tabs { flex-direction:column; }
+  .attendance-buttons { flex-direction:column; }
 }
 </style>
 </head>
@@ -48,6 +48,7 @@ th { background:#d0f0e0; }
 <header>
   <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Club_Rugby_Zalaeta_Logo.png" alt="Club Rugby Zalaeta">
   <h1>Entrenadores CDZ</h1>
+  <!-- Contenedor del menú oculto por defecto -->
   <div id="menuContainer" style="display:none;">
     <select id="menuSelect" onchange="switchView()">
       <option value="players">Jugadores</option>
@@ -77,7 +78,11 @@ th { background:#d0f0e0; }
     <button class="tabBtn" onclick="filterCategory('M18')">M18</button>
   </div>
 
-  <div>
+  <!-- Botón para mostrar/ocultar formulario -->
+  <button id="toggleFormBtn">➕ Añadir jugador</button>
+
+  <!-- Formulario oculto -->
+  <div id="addPlayerForm" style="display:none; margin-top:10px;">
     <input type="text" id="playerName" placeholder="Nombre completo">
     <input type="date" id="playerBirth">
     <input type="text" id="fatherName" placeholder="Nombre padre">
@@ -89,7 +94,7 @@ th { background:#d0f0e0; }
       <option value="M16">M16</option>
       <option value="M18">M18</option>
     </select>
-    <button onclick="addPlayer()">➕ Añadir jugador</button>
+    <button onclick="addPlayer()">Guardar jugador</button>
   </div>
 
   <div id="playersContainer"></div>
@@ -122,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const MASTER_PASSWORD = '123123';
   let currentCategory = 'all';
 
+  // Registro y login
   function register(){
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -153,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Área admin
   function showAdmin(){
     const pass = document.getElementById('adminPassword').value;
     if(pass!==MASTER_PASSWORD){alert('Contraseña incorrecta'); return;}
@@ -170,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function approveUser(uid){ db.ref('users/'+uid+'/status').set('aprobado'); }
 
+  // Jugadores
   function addPlayer(){
     const name = document.getElementById('playerName').value;
     const birth = document.getElementById('playerBirth').value;
@@ -191,10 +199,10 @@ document.addEventListener('DOMContentLoaded', () => {
       snap.forEach(child => {
         const p = child.val();
         const id = child.key;
-        if(currentCategory === 'all' || p.category === currentCategory){
+        if (currentCategory === 'all' || p.category === currentCategory) {
           const div = document.createElement('div');
-          div.className='card';
-          div.innerHTML=`
+          div.className = 'card';
+          div.innerHTML = `
             <div class='info'>
               <strong>${p.name}</strong>
               <div class='attendance-buttons'>
@@ -205,8 +213,10 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class='player-details' id='details_${id}' style='display:none'>
               Nacimiento: <input value='${p.birth}' onchange='updateField("${id}","birth",this.value)'><br>
-              Padre: <input value='${p.fatherName}' onchange='updateField("${id}","fatherName",this.value)'> (<input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this.value)'>)<br>
-              Madre: <input value='${p.motherName}' onchange='updateField("${id}","motherName",this.value)'> (<input value='${p.motherPhone}' onchange='updateField("${id}","motherPhone",this.value)'>)<br>
+              Padre: <input value='${p.fatherName}' onchange='updateField("${id}","fatherName",this.value)'> 
+              (<input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this.value)'>)<br>
+              Madre: <input value='${p.motherName}' onchange='updateField("${id}","motherName",this.value)'> 
+              (<input value='${p.motherPhone}' onchange='updateField("${id}","motherPhone",this.value)'>)<br>
               <table id='attendance_${id}'>
                 <tr><th>Fecha entrenamiento</th><th>Asistencia</th></tr>
               </table>
@@ -239,8 +249,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = document.getElementById('details_'+id);
     el.style.display = (el.style.display==='none')?'block':'none';
   }
-  function updateField(id,field,value){ db.ref('players/'+id+'/'+field).set(value); }
-  function deletePlayer(id){ if(confirm('¿Seguro que quieres borrar este jugador?')){ db.ref('players/'+id).remove(); } }
+  function updateField(id,field,value){
+    db.ref('players/'+id+'/'+field).set(value);
+  }
+  function deletePlayer(id){
+    if(confirm('¿Seguro que quieres borrar este jugador?')){
+      db.ref('players/'+id).remove();
+    }
+  }
   function filterCategory(cat){
     currentCategory=cat;
     document.querySelectorAll('.tabBtn').forEach(btn=>btn.classList.remove('active'));
@@ -248,16 +264,30 @@ document.addEventListener('DOMContentLoaded', () => {
     loadPlayers();
   }
 
+  // Menú desplegable
   window.switchView = function(){
     const val = document.getElementById('menuSelect').value;
     document.getElementById('app').style.display = (val==='players')?'block':'none';
     document.getElementById('adminArea').style.display = (val==='admin')?'block':'none';
   }
 
-  // Exponer funciones al global
-  window.register=register; window.login=login; window.showAdmin=showAdmin; window.approveUser=approveUser;
-  window.addPlayer=addPlayer; window.markAttendance=markAttendance; window.renderAttendanceTable=renderAttendanceTable;
-  window.toggleDetails=toggleDetails; window.updateField=updateField; window.deletePlayer=deletePlayer; window.filterCategory=filterCategory;
+  // Toggle formulario añadir jugador
+  document.getElementById('toggleFormBtn').addEventListener('click', () => {
+    const form = document.getElementById('addPlayerForm');
+    form.style.display = (form.style.display === 'none') ? 'block' : 'none';
+  });
+
+  window.register = register;
+  window.login = login;
+  window.showAdmin = showAdmin;
+  window.approveUser = approveUser;
+  window.addPlayer = addPlayer;
+  window.markAttendance = markAttendance;
+  window.renderAttendanceTable = renderAttendanceTable;
+  window.toggleDetails = toggleDetails;
+  window.updateField = updateField;
+  window.deletePlayer = deletePlayer;
+  window.filterCategory = filterCategory;
 
 });
 </script>
