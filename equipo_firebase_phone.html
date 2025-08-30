@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Control de Jugadores - Firebase SMS</title>
+
+  <!-- SDKs de Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f4f4f4; }
+    input, button { margin: 5px 0; padding: 8px; }
+    #app { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>📋 Control de Jugadores</h1>
+
+  <!-- 🔑 LOGIN CON TELÉFONO -->
+  <div id="loginBox">
+    <h2>Acceso entrenadores</h2>
+    <input type="tel" id="phoneNumber" placeholder="+34 600 000 000"><br>
+    <div id="recaptcha-container"></div>
+    <button onclick="sendCode()">📲 Enviar código SMS</button><br><br>
+
+    <input type="text" id="verificationCode" placeholder="Código recibido por SMS"><br>
+    <button onclick="verifyCode()">✅ Verificar</button>
+    <p id="loginMsg"></p>
+  </div>
+
+  <!-- 📊 APLICACIÓN (solo visible tras login) -->
+  <div id="app" style="display:none;">
+    <h2>Gestión de jugadores</h2>
+
+    <!-- Formulario añadir jugador -->
+    <input type="text" id="playerName" placeholder="Nombre completo">
+    <input type="date" id="playerBirth">
+    <input type="tel" id="playerPhone" placeholder="Teléfono">
+    <button onclick="addPlayer()">➕ Añadir jugador</button>
+
+    <!-- Selector de fecha de entreno -->
+    <h3>Asistencia</h3>
+    <input type="date" id="trainingDate">
+    <script>document.getElementById("trainingDate").valueAsDate = new Date();</script>
+
+    <!-- Tabla de jugadores -->
+    <table id="playersTable">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>F. nacimiento</th>
+          <th>Teléfono</th>
+          <th>Asiste</th>
+          <th>Nota</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    // 🚀 CONFIGURACIÓN DE FIREBASE (ya con tus claves)
+    const firebaseConfig = {
+      apiKey: "AIzaSyC-DTX0x8Bebk6Z1TEkyyVD3K4jOPVSmLA",
+      authDomain: "control-jugadores-64ae6.firebaseapp.com",
+      databaseURL: "https://control-jugadores-64ae6-default-rtdb.firebaseio.com",
+      projectId: "control-jugadores-64ae6",
+      storageBucket: "control-jugadores-64ae6.firebasestorage.app",
+      messagingSenderId: "345003884874",
+      appId: "1:345003884874:web:51308a576a636b5a9741b3",
+      measurementId: "G-1RR2CLEPL1"
+    };
+
+    // Inicializar Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const auth = firebase.auth();
+    let confirmationResult;
+
+    // 🛡️ reCAPTCHA obligatorio para SMS
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+      'size': 'normal',
+      'callback': (response) => {
+        console.log("reCAPTCHA verificado");
+      }
+    });
+
+    // Enviar SMS
+    function sendCode() {
+      const phoneNumber = document.getElementById("phoneNumber").value;
+      const appVerifier = window.recaptchaVerifier;
+      auth.signInWithPhoneNumber(phoneNumber, appVerifier)
+        .then(result => {
+          confirmationResult = result;
+          document.getElementById("loginMsg").innerText = "Código enviado al móvil.";
+        })
+        .catch(error => {
+          document.getElementById("loginMsg").innerText = "Error: " + error.message;
+        });
+    }
+
+    // Verificar código SMS
+    function verifyCode() {
+      const code = document.getElementById("verificationCode").value;
+      confirmationResult.confirm(code).then(result => {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("app").style.display = "block";
+        loadPlayers();
+      }).catch(error => {
+        document.getElementById("loginMsg").innerText = "Código incorrecto: " + error.message;
+      });
+    }
+
+    // ➕ Añadir jugador
+    function addPlayer() {
+      const name = document.getElementById("playerName").value;
+      const birth = document.getElementById("playerBirth").value;
+      const phone = document.getElementById("playerPhone").value;
+      if (!name) return alert("Pon el nombre del jugador");
+      const newRef = db.ref("players").push();
+      newRef.set({ name, birth, phone });
+      document.getElementById("playerName").value = "";
+      document.getElementById("playerBirth").value = "";
+      document.getElementById("playerPhone").value = "";
+    }
+
+    // 📥 Cargar jugadores y mostrarlos en la tabla
+    function loadPlayers() {
+      const tbody = document.querySelector("#playersTable tbody");
+      db.ref("players").on("value", snapshot => {
+        tbody.innerHTML = "";
+        snapshot.forEach(child => {
+          const player = child.val();
+          const id = child.key;
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${player.name}</td>
+            <td>${player.birth || ""}</td>
+            <td>${player.phone || ""}</td>
+            <td><input type="checkbox" onchange="markAttendance('${id}', this.checked)"></td>
+            <td><input type="text" onblur="saveNote('${id}', this.value)"></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    // ✅ Guardar asistencia
+    function markAttendance(playerId, present) {
+      const date = document.getElementById("trainingDate").value;
+      db.ref("attendance/" + date + "/" + playerId).set(present);
+    }
+
+    // 📝 Guardar nota
+    function saveNote(playerId, note) {
+      const date = document.getElementById("trainingDate").value;
+      db.ref("notes/" + date + "/" + playerId).set(note);
+    }
+  </script>
+</body>
+</html>
