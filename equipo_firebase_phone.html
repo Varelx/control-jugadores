@@ -9,37 +9,42 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-<!-- Chart.js para gráficas si se necesitan estadísticas -->
+<!-- Chart.js si se necesitan gráficas -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- FullCalendar cargado con defer -->
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js" defer></script>
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
-
-<!-- Estilos modernos y juveniles -->
+<!-- Estilos -->
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 body { font-family: 'Quicksand', sans-serif; background:#f0f8f5; margin:0; padding:0; }
-header { background:#2e7d32; color:white; padding:20px; text-align:center; font-size:1.6em; font-weight:600; }
+header { display:flex; align-items:center; background:#2e7d32; color:white; padding:10px 20px; }
+header img { height:50px; margin-right:20px; }
+header h1 { font-size:1.6em; font-weight:600; margin:0; }
 .container { max-width:1200px; margin:20px auto; padding:20px; background:white; border-radius:12px; box-shadow:0 6px 15px rgba(0,0,0,0.1); }
 button { padding:10px 16px; border:none; border-radius:8px; background:#2e7d32; color:white; cursor:pointer; margin:2px; transition:0.3s; font-weight:500; }
 button:hover { background:#1b5e20; }
 input, select { padding:8px; margin:6px 0; border-radius:6px; border:1px solid #ccc; font-size:0.95em; }
 .card { background:white; border:1px solid #ddd; border-radius:10px; padding:15px; margin:10px; box-shadow:0 4px 8px rgba(0,0,0,0.05); cursor:pointer; transition:0.3s; }
 .card:hover { box-shadow:0 6px 12px rgba(0,0,0,0.1); }
-.card .info { flex:1; display:flex; justify-content: space-between; align-items:center; }
 .tabs { margin:10px 0; }
 .tabs button { background:#d0f0e0; color:#2e7d32; }
 .tabs button.active { background:#2e7d32; color:white; }
 .player-details { display:none; margin-top:10px; background:#f7fff7; padding:10px; border-radius:8px; }
 .attendance-buttons button { margin-right:5px; }
-.calendar { max-width:100%; margin-top:10px; }
+table { width:100%; border-collapse:collapse; margin-top:10px; }
+th, td { border:1px solid #ccc; padding:6px 10px; text-align:center; }
+th { background:#d0f0e0; }
 </style>
 </head>
 <body>
 <header>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Club_Rugby_Zalaeta_Logo.png" alt="Club Rugby Zalaeta">
   <h1>🏉 Entrenadores CDZ</h1>
+  <select id="menuSelect" onchange="switchView()">
+    <option value="players">Jugadores</option>
+    <option value="admin">Área Administración</option>
+  </select>
 </header>
+
 <div class="container">
 
 <!-- Registro / Login -->
@@ -80,14 +85,11 @@ input, select { padding:8px; margin:6px 0; border-radius:6px; border:1px solid #
 </div>
 
 <!-- Área Admin -->
-<div>
+<div id="adminArea" style="display:none;">
   <h2>Área de Administración</h2>
   <input type="password" id="adminPassword" placeholder="Contraseña"><br>
   <button onclick="showAdmin()">Acceder</button>
-  <div id="adminArea" style="display:none; margin-top:10px;">
-    <h3>Solicitudes pendientes</h3>
-    <div id="requestsList"></div>
-  </div>
+  <div id="requestsList" style="margin-top:10px;"></div>
 </div>
 
 <script>
@@ -109,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const MASTER_PASSWORD = '123123';
   let currentCategory = 'all';
 
+  // Registro y login
   function register(){
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -136,29 +139,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Área admin
   function showAdmin(){
     const pass = document.getElementById('adminPassword').value;
     if(pass!==MASTER_PASSWORD){alert('Contraseña incorrecta'); return;}
-    document.getElementById('adminArea').style.display='block';
-    loadRequests();
-  }
-
-  function loadRequests(){
-    const container = document.getElementById('requestsList');
-    db.ref('users').on('value',snap=>{
-      container.innerHTML='';
+    document.getElementById('requestsList').innerHTML='';
+    db.ref('users').once('value',snap=>{
       snap.forEach(child=>{
         const u = child.val();
         if(u.status==='pendiente'){
           const div = document.createElement('div');
           div.innerHTML=`${u.email} <button onclick='approveUser("${child.key}")'>Aprobar</button>`;
-          container.appendChild(div);
+          document.getElementById('requestsList').appendChild(div);
         }
       });
     });
   }
   function approveUser(uid){ db.ref('users/'+uid+'/status').set('aprobado'); }
 
+  // Jugadores
   function addPlayer(){
     const name = document.getElementById('playerName').value;
     const birth = document.getElementById('playerBirth').value;
@@ -196,12 +195,12 @@ document.addEventListener('DOMContentLoaded', () => {
               Nacimiento: <input value='${p.birth}' onchange='updateField("${id}","birth",this.value)'><br>
               Padre: <input value='${p.fatherName}' onchange='updateField("${id}","fatherName",this.value)'> (<input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this.value)'>)<br>
               Madre: <input value='${p.motherName}' onchange='updateField("${id}","motherName",this.value)'> (<input value='${p.motherPhone}' onchange='updateField("${id}","motherPhone",this.value)'>)<br>
-              <div id='calendar_${id}' class='calendar'></div>
+              <table id='attendance_${id}'><tr><th>Fecha</th><th>Asistencia</th></tr></table>
               <button onclick='deletePlayer("${id}")'>🗑️ Borrar jugador</button>
             </div>
           `;
           container.appendChild(div);
-          renderCalendar(id,p.attendance);
+          renderAttendanceTable(id, p.attendance);
         }
       });
     });
@@ -209,34 +208,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function markAttendance(id,presente){
     const today = new Date().toISOString().slice(0,10);
-    db.ref('players/'+id+'/attendance/'+today).set(presente);
+    db.ref('players/'+id+'/attendance/'+today).set(presente).then(()=>loadPlayers());
   }
 
-  function renderCalendar(id, attendance) {
-    const calendarEl = document.getElementById('calendar_' + id);
-    if (!calendarEl) return;
-    calendarEl.innerHTML = '';
-
-    if (typeof FullCalendar === 'undefined') {
-      console.error('FullCalendar no está definido.');
-      return;
+  function renderAttendanceTable(id, attendance){
+    const table = document.getElementById('attendance_'+id);
+    table.innerHTML = '<tr><th>Fecha</th><th>Asistencia</th></tr>';
+    for(const date in attendance){
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${date}</td><td>${attendance[date] ? '✅' : '❌'}</td>`;
+      table.appendChild(tr);
     }
-
-    const events = [];
-    for (const date in attendance) {
-      events.push({
-        title: attendance[date] ? '✅' : '❌',
-        start: date,
-        color: attendance[date] ? 'green' : 'red'
-      });
-    }
-
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: 'dayGridMonth',
-      events: events,
-      height: 'auto'
-    });
-    calendar.render();
   }
 
   function toggleDetails(id){
@@ -251,12 +233,18 @@ document.addEventListener('DOMContentLoaded', () => {
       db.ref('players/'+id).remove();
     }
   }
-
   function filterCategory(cat){
     currentCategory=cat;
     document.querySelectorAll('.tabBtn').forEach(btn=>btn.classList.remove('active'));
     Array.from(document.querySelectorAll('.tabBtn')).find(b=>b.textContent===cat || cat==='Todos').classList.add('active');
     loadPlayers();
+  }
+
+  // Menú desplegable
+  window.switchView = function(){
+    const val = document.getElementById('menuSelect').value;
+    document.getElementById('app').style.display = (val==='players')?'block':'none';
+    document.getElementById('adminArea').style.display = (val==='admin')?'block':'none';
   }
 
   window.register = register;
@@ -265,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.approveUser = approveUser;
   window.addPlayer = addPlayer;
   window.markAttendance = markAttendance;
-  window.renderCalendar = renderCalendar;
+  window.renderAttendanceTable = renderAttendanceTable;
   window.toggleDetails = toggleDetails;
   window.updateField = updateField;
   window.deletePlayer = deletePlayer;
