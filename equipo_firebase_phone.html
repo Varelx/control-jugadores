@@ -21,18 +21,16 @@ header {
   position: sticky; 
   top: 0; 
   z-index: 100;
-  background: #2e7d32; /* verde */
-  border-bottom: 1px solid #1b5e20; /* verde más oscuro */
+  background: #2e7d32; 
+  border-bottom: 1px solid #1b5e20; 
   display: flex; 
   align-items: center; 
   justify-content: space-between;
   padding: 8px 14px;
 }
-
 header img { height: 40px; }
-
 header h1 { 
-  font-size: 1.3em; 
+  font-size: clamp(1em, 2vw, 1.3em); 
   margin: 0; 
   color: white; 
   font-weight: 600; 
@@ -69,8 +67,35 @@ input, select {
 
 /* Detalles ocultos */
 .player-details {
-  display:none; margin-top:12px;
-  border-top:1px solid #eee; padding-top:12px;
+  display:none;
+  margin-top:12px;
+  border-top:1px solid #eee;
+  padding-top:12px;
+  font-size: 0.95em;
+  line-height:1.4;
+  color: #333;
+}
+
+/* Formulario de detalles alineado en dos columnas */
+.player-details .form-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.player-details .form-row small {
+  width: 120px;
+  font-size: 0.85em;
+  color: #555;
+  flex-shrink: 0;
+}
+.player-details .form-row input {
+  flex:1;
+  font-size: 0.95em;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
 /* Tabs */
@@ -96,16 +121,15 @@ input, select {
 }
 
 /* Tablas */
-table { width:100%; border-collapse:collapse; margin-top:10px; }
-th, td {
-  border:1px solid #ccc; padding:6px; text-align:center;
-  font-size:0.9em;
-}
+table { width:100%; border-collapse:collapse; margin-top:10px; font-size:0.9em; }
+th, td { border:1px solid #ccc; padding:6px; text-align:center; }
 th { background:#f5f5f5; }
 
 /* Responsive */
 @media (max-width:768px) {
   header { flex-direction:row; }
+  .player-details .form-row { flex-direction: column; align-items:flex-start; }
+  .player-details .form-row small { width:100%; margin-bottom:4px; }
 }
 </style>
 </head>
@@ -248,6 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ref = db.ref('players').push();
     ref.set({name,birth,fatherName,fatherPhone,motherName,motherPhone,category,attendance:{}});
     ['playerName','playerBirth','fatherName','fatherPhone','motherName','motherPhone'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('addPlayerForm').style.display='none';
   }
 
   function loadPlayers(){
@@ -270,11 +295,11 @@ document.addEventListener('DOMContentLoaded', () => {
               <button onclick='toggleDetails("${id}")'>Ver / Editar</button>
             </div>
             <div class='player-details' id='details_${id}'>
-              <small>Nacimiento:</small> <input value='${p.birth}' onchange='updateField("${id}","birth",this.value)'><br>
-              <small>Padre:</small> <input value='${p.fatherName}' onchange='updateField("${id}","fatherName",this.value)'> 
-              <small>Nº Tlf. Padre:<small><input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this.value)'><br>
-              <small>Madre:</small> <input value='${p.motherName}' onchange='updateField("${id}","motherName",this.value)'> 
-              <small>Nº Tlf. Madre:<small><input value='${p.motherPhone}' onchange='updateField("${id}","motherPhone",this.value)'><br>
+              <div class="form-row"><small>Nacimiento:</small><input value='${p.birth}' onchange='updateField("${id}","birth",this.value)'></div>
+              <div class="form-row"><small>Padre:</small><input value='${p.fatherName}' onchange='updateField("${id}","fatherName",this.value)'>
+              <small>Tlf. Padre:</small><input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this.value)'></div>
+              <div class="form-row"><small>Madre:</small><input value='${p.motherName}' onchange='updateField("${id}","motherName",this.value)'>
+              <small>Tlf. Madre:</small><input value='${p.motherPhone}' onchange='updateField("${id}","motherPhone",this.value)'></div>
               <table id='attendance_${id}'><tr><th>Fecha</th><th>Asistencia</th></tr></table>
               <button onclick='deletePlayer("${id}")'>🗑️ Borrar jugador</button>
             </div>`;
