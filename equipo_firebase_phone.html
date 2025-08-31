@@ -28,10 +28,15 @@ header {
   justify-content: space-between;
   padding: 8px 14px;
 }
-header img { height: 40px; }
-header h1 { font-size: 1.3em; margin: 0; color: white; font-weight: 600; }
-#menuContainer select { border: none; background: none; font-size: 1em; color: white; }
 
+header img { height: 40px; }
+
+header h1 { 
+  font-size: 1.3em; 
+  margin: 0; 
+  color: white; 
+  font-weight: 600; 
+}
 
 /* Contenedor principal tipo feed */
 .container { max-width:600px; margin:20px auto; padding:0 10px; }
@@ -322,7 +327,23 @@ document.addEventListener('DOMContentLoaded', () => {
     Array.from(document.querySelectorAll('.tabBtn')).find(b=>b.textContent===cat).classList.add('active');
     loadPlayers();
   }
+  
+  /* Menú desplegable estilo integrado */
+#menuContainer select {
+  border: none; 
+  background: #2e7d32; /* mismo verde que el header */
+  font-size: 1em; 
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
 
+/* Efecto al desplegar opciones */
+#menuContainer select option {
+  background: white; 
+  color: #2e7d32;
+}
   window.switchView = function(){
     const val = document.getElementById('menuSelect').value;
     document.getElementById('app').style.display = (val==='players')?'block':'none';
