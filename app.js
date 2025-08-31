@@ -25,25 +25,31 @@ document.getElementById('registerBtn').addEventListener('click', () => {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   createUserWithEmailAndPassword(auth, email, password)
-    .then(user => set(ref(db, 'users/'+user.user.uid), {email, status:'pendiente'}))
+    .then(user => set(ref(db,'users/'+user.user.uid), {email, status:'pendiente'}))
     .then(()=> showMsg('Registrado, pendiente de aprobación'))
-    .catch(e => showMsg(e.message, 'error'));
+    .catch(e => showMsg(e.message,'error'));
 });
 
 document.getElementById('loginBtn').addEventListener('click', () => {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
-  signInWithEmailAndPassword(auth, email, password)
-    .catch(e => showMsg(e.message, 'error'));
+  signInWithEmailAndPassword(auth,email,password)
+    .catch(e => showMsg(e.message,'error'));
 });
 
-onAuthStateChanged(auth, user => {
+onAuthStateChanged(auth,user=>{
   if(user){
-    get(ref(db,'users/'+user.uid+'/status')).then(snap=>{
-      if(snap.val() === 'aprobado'){
+    get(ref(db,'users/'+user.uid)).then(snap=>{
+      const data = snap.val();
+      if(data.status==='aprobado'){
         document.getElementById('authBox').style.display='none';
         document.getElementById('app').style.display='block';
-        document.getElementById('menuContainer').style.display='block';
+
+        // Mostrar menú admin solo si el usuario tiene rol admin
+        if(data.role==='admin'){
+          document.getElementById('menuContainer').style.display='block';
+        }
+
         loadPlayers();
       }
     });
@@ -52,29 +58,42 @@ onAuthStateChanged(auth, user => {
   }
 });
 
-function showMsg(msg,type='info'){ authMsg.innerText=msg; authMsg.style.color=type==='error'?'red':'green'; }
+function showMsg(msg,type='info'){
+  authMsg.innerText = msg;
+  authMsg.style.color = type==='error' ? 'red' : 'green';
+}
 
 /* ---------------- ADMIN ---------------- */
 document.getElementById('adminBtn').addEventListener('click', () => {
-  const pass = document.getElementById('adminPassword').value;
-  // Mejor: usar reglas Firebase en vez de password visible
-  if(pass!=='123123'){ alert('Contraseña incorrecta'); return; }
-  const list = document.getElementById('requestsList');
-  list.innerHTML='';
-  get(ref(db,'users')).then(snap=>{
-    snap.forEach(child=>{
-      const u = child.val();
-      if(u.status==='pendiente'){
-        const div = document.createElement('div');
-        div.innerHTML=`${u.email} <button onclick='approveUser("${child.key}", this)'>Aprobar</button>`;
-        list.appendChild(div);
-      }
+  const user = auth.currentUser;
+  if(!user) return alert('No has iniciado sesión');
+
+  // Comprobamos rol admin desde Firebase
+  get(ref(db,'users/' + user.uid)).then(snap=>{
+    const data = snap.val();
+    if(!data || data.role !== 'admin'){
+      return alert('No tienes permisos de administrador');
+    }
+
+    // Usuario admin, mostramos solicitudes
+    const list = document.getElementById('requestsList');
+    list.innerHTML='';
+    get(ref(db,'users')).then(snap=>{
+      snap.forEach(child=>{
+        const u = child.val();
+        if(u.status==='pendiente'){
+          const div = document.createElement('div');
+          div.innerHTML=`${u.email} <button onclick='approveUser("${child.key}", this)'>Aprobar</button>`;
+          list.appendChild(div);
+        }
+      });
     });
   });
 });
 
 window.approveUser = function(uid, btn){
-  set(ref(db,'users/'+uid+'/status'),'aprobado').then(()=> btn.parentNode.remove());
+  set(ref(db,'users/'+uid+'/status'),'aprobado')
+    .then(()=> btn.parentNode.remove());
 }
 
 /* ---------------- PLAYERS ---------------- */
