@@ -105,20 +105,19 @@ document.getElementById('savePlayerBtn').addEventListener('click', addPlayer);
 function addPlayer(){
   const name = document.getElementById('playerName').value;
   const birth = document.getElementById('playerBirth').value;
-  const fatherName = document.getElementById('fatherName').value;
-  const fatherPhone = document.getElementById('fatherPhone').value;
-  const motherName = document.getElementById('motherName').value;
-  const motherPhone = document.getElementById('motherPhone').value;
   const category = document.getElementById('categorySelect').value;
+  const dni = document.getElementById('playerDni').value;
+  const address = document.getElementById('playerAddress').value;
+  const phone = document.getElementById('playerPhone').value;
+  const license = document.getElementById('playerLicense').value;
+  const moreInfo = document.getElementById('playerMoreInfo').value;
 
   if(!name){ alert('Nombre requerido'); return; }
-  if(!/^\d{9}$/.test(fatherPhone)){ alert('Teléfono 1 no válido'); return; }
-  if(!/^\d{9}$/.test(motherPhone)){ alert('Teléfono 2 no válido'); return; }
-  if(new Date(birth) > new Date()){ alert('Fecha de nacimiento inválida'); return; }
+  if(!birth){ alert('Fecha de nacimiento requerida'); return; }
 
   const refPlayer = push(ref(db,'players'));
-  set(refPlayer, {name,birth,fatherName,fatherPhone,motherName,motherPhone,category,attendance:{}});
-  clearForm(['playerName','playerBirth','fatherName','fatherPhone','motherName','motherPhone']);
+  set(refPlayer, {name, birth, category, dni, address, phone, license, moreInfo, attendance:{}});
+  clearForm(['playerName','playerBirth','categorySelect','playerDni','playerAddress','playerPhone','playerLicense','playerMoreInfo']);
   document.getElementById('addPlayerForm').style.display='none';
 }
 
