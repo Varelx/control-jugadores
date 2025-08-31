@@ -153,11 +153,12 @@ function renderPlayerCard(id, p, container){
       <button onclick='toggleDetails("${id}")'>Ver / Editar</button>
     </div>
     <div class='player-details' id='details_${id}'>
-      <div class="form-row"><small>Nacimiento:</small><input value='${p.birth}' onchange='updateField("${id}","birth",this.value)'></div>
-      <div class="form-row"><small>Contacto 1:</small><input value='${p.fatherName}' onchange='updateField("${id}","fatherName",this.value)'>
-      <small>Nº Tlf. 1:</small><input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this.value)'></div>
-      <div class="form-row"><small>Contacto 2:</small><input value='${p.motherName}' onchange='updateField("${id}","motherName",this.value)'>
-      <small>Nº Tlf. 2:</small><input value='${p.motherPhone}' onchange='updateField("${id}","motherPhone",this.value)'></div>
+      <div class="form-row"><small>Nacimiento:</small><input value='${p.birth || ""}' onchange='updateField("${id}","birth",this.value)'></div>
+      <div class="form-row"><small>DNI:</small><input value='${p.dni || ""}' onchange='updateField("${id}","dni",this.value)'></div>
+      <div class="form-row"><small>Dirección:</small><input value='${p.address || ""}' onchange='updateField("${id}","address",this.value)'></div>
+      <div class="form-row"><small>Teléfono:</small><input value='${p.phone || ""}' onchange='updateField("${id}","phone",this.value)'></div>
+      <div class="form-row"><small>Nº Licencia:</small><input value='${p.license || ""}' onchange='updateField("${id}","license",this.value)'></div>
+      <div class="form-row"><small>Más info:</small><input value='${p.moreInfo || ""}' onchange='updateField("${id}","moreInfo",this.value)'></div>
       <table id='attendance_${id}'><tr><th>Fecha</th><th>Asistencia</th></tr></table>
       <button onclick='deletePlayer("${id}")'>🗑️ Borrar jugador</button>
     </div>`;
@@ -165,7 +166,6 @@ function renderPlayerCard(id, p, container){
   renderAttendanceTable(id,p.attendance);
   updateAttendanceButtons(id,p.attendance);
 }
-
 
 window.markAttendance = function(id,presente){
   const today = new Date().toISOString().slice(0,10);
