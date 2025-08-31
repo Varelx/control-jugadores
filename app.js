@@ -138,12 +138,13 @@ function loadPlayers(){
   });
 }
 
-function renderPlayerCard(id,p,container){
+function renderPlayerCard(id, p, container){
   const div = document.createElement('div');
   div.className='card';
   div.innerHTML=`
     <div class='info'>
-      <strong>${p.name}</strong>
+      <input value='${p.name}' onchange='updateField("${id}","name",this.value)' 
+             style="font-weight:600; font-size:1.1em; width:100%; border:none; background:transparent;">
       <small>Categoría: ${p.category}</small>
       <div class='attendance-buttons'>
         <button id='asist_${id}' onclick='markAttendance("${id}",true)'>✅ Asistencia</button>
@@ -164,6 +165,7 @@ function renderPlayerCard(id,p,container){
   renderAttendanceTable(id,p.attendance);
   updateAttendanceButtons(id,p.attendance);
 }
+
 
 window.markAttendance = function(id,presente){
   const today = new Date().toISOString().slice(0,10);
