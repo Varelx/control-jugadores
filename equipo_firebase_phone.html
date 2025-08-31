@@ -100,7 +100,7 @@ th { background:#f5f5f5; }
 </head>
 <body>
 <header>
-  <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Club_Rugby_Zalaeta_Logo.png" alt="Club Rugby Zalaeta">
+  <img src="https://github.com/Varelx/control-jugadores/blob/main/Arteixo%20sin%20fondo.png?raw=true" alt="Club Rugby Zalaeta">
   <h1>Entrenadores CDZ</h1>
   <div id="menuContainer" style="display:none;">
     <select id="menuSelect" onchange="switchView()">
@@ -125,9 +125,14 @@ th { background:#f5f5f5; }
 <!-- App -->
 <div id="app" style="display:none;">
   <div class="tabs">
+    <button class="tabBtn" onclick="filterCategory('M8')">M18</button>
+    <button class="tabBtn" onclick="filterCategory('M10')">M18</button>
+    <button class="tabBtn" onclick="filterCategory('M12')">M18</button>
     <button class="tabBtn" onclick="filterCategory('M14')">M14</button>
     <button class="tabBtn" onclick="filterCategory('M16')">M16</button>
     <button class="tabBtn" onclick="filterCategory('M18')">M18</button>
+    <button class="tabBtn" onclick="filterCategory('Fem')">Fem</button>
+    <button class="tabBtn" onclick="filterCategory('Masc')">Masc</button>
   </div>
   <button id="toggleFormBtn">➕ Añadir jugador</button>
   <div id="addPlayerForm" style="display:none; margin-top:10px;">
@@ -138,9 +143,14 @@ th { background:#f5f5f5; }
     <input type="text" id="motherName" placeholder="Nombre madre">
     <input type="tel" id="motherPhone" placeholder="Teléfono madre">
     <select id="categorySelect">
+      <option value="M8">M8</option>
+      <option value="M10">M10</option>
+      <option value="M12">M12</option>
       <option value="M14">M14</option>
       <option value="M16">M16</option>
       <option value="M18">M18</option>
+      <option value="Fem">Fem</option>
+      <option value="Masc">Masc</option>
     </select>
     <button onclick="addPlayer()">Guardar jugador</button>
   </div>
@@ -253,9 +263,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class='player-details' id='details_${id}'>
               <small>Nacimiento:</small> <input value='${p.birth}' onchange='updateField("${id}","birth",this.value)'><br>
               <small>Padre:</small> <input value='${p.fatherName}' onchange='updateField("${id}","fatherName",this.value)'> 
-              (<input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this.value)'>)<br>
+              <small>Nº Tlf. Padre:<small><input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this.value)'><br>
               <small>Madre:</small> <input value='${p.motherName}' onchange='updateField("${id}","motherName",this.value)'> 
-              (<input value='${p.motherPhone}' onchange='updateField("${id}","motherPhone",this.value)'>)<br>
+              <small>Nº Tlf. Madre:<small><input value='${p.motherPhone}' onchange='updateField("${id}","motherPhone",this.value)'><br>
               <table id='attendance_${id}'><tr><th>Fecha</th><th>Asistencia</th></tr></table>
               <button onclick='deletePlayer("${id}")'>🗑️ Borrar jugador</button>
             </div>`;
