@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏉 Entrenadores CDZ</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <img src="https://github.com/Varelx/control-jugadores/blob/main/Arteixo%20sin%20fondo.png?raw=true" alt="Club Rugby Zalaeta">
+  <h1>Entrenadores CDZ</h1>
+  <div id="menuContainer" style="display:none;">
+    <select id="menuSelect" onchange="switchView()">
+      <option value="players">Jugadores</option>
+      <option value="admin">Área Administración</option>
+    </select>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Auth -->
+  <div id="authBox">
+    <h2>Entrenadores</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Contraseña">
+    <button id="loginBtn">Iniciar sesión</button>
+    <button id="registerBtn">Registrarse</button>
+    <p id="authMsg"></p>
+  </div>
+
+  <!-- App -->
+  <div id="app" style="display:none;">
+    <div class="tabs">
+      <button class="tabBtn" onclick="filterCategory('M8')">M8</button>
+      <button class="tabBtn" onclick="filterCategory('M10')">M10</button>
+      <button class="tabBtn" onclick="filterCategory('M12')">M12</button>
+      <button class="tabBtn" onclick="filterCategory('M14')">M14</button>
+      <button class="tabBtn" onclick="filterCategory('M16')">M16</button>
+      <button class="tabBtn" onclick="filterCategory('M18')">M18</button>
+      <button class="tabBtn" onclick="filterCategory('Masc')">Masc</button>
+    </div>
+    <button id="toggleFormBtn">➕ Añadir jugador</button>
+
+    <!-- Formulario modal -->
+    <div id="addPlayerForm" class="modal" style="display:none;">
+      <input type="text" id="playerName" placeholder="Nombre completo">
+      <input type="date" id="playerBirth">
+      <input type="text" id="fatherName" placeholder="Nombre padre">
+      <input type="tel" id="fatherPhone" placeholder="Teléfono padre">
+      <input type="text" id="motherName" placeholder="Nombre madre">
+      <input type="tel" id="motherPhone" placeholder="Teléfono madre">
+      <select id="categorySelect">
+        <option value="M8">M8</option>
+        <option value="M10">M10</option>
+        <option value="M12">M12</option>
+        <option value="M14">M14</option>
+        <option value="M16">M16</option>
+        <option value="M18">M18</option>
+        <option value="Masc">Masc</option>
+      </select>
+      <button id="savePlayerBtn">Guardar jugador</button>
+    </div>
+
+    <div id="playersContainer"></div>
+  </div>
+
+  <!-- Área Admin -->
+  <div id="adminArea" style="display:none;">
+    <h2>Área de Administración</h2>
+    <input type="password" id="adminPassword" placeholder="Contraseña">
+    <button id="adminBtn">Acceder</button>
+    <div id="requestsList" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
