@@ -60,18 +60,22 @@ function showMsg(msg, type = 'info') {
 /* ---------------- ADMIN ---------------- */
 document.getElementById('adminBtn').addEventListener('click', () => {
   const user = auth.currentUser;
-  if (!user) return alert('No has iniciado sesión');
+  if(!user) return alert('No has iniciado sesión');
 
-  get(ref(db, 'users/' + user.uid)).then(snap => {
+  // Comprobamos rol admin desde Firebase
+  get(ref(db,'users/' + user.uid)).then(snap=>{
     const data = snap.val();
-    if (!data || data.role !== 'admin') return alert('No tienes permisos de administrador');
+    if(!data || data.role !== 'admin'){
+      return alert('No tienes permisos de administrador');
+    }
 
+    // Usuario admin, mostramos solicitudes pendientes
     const list = document.getElementById('requestsList');
     list.innerHTML = '';
-    get(ref(db, 'users')).then(snap => {
-      snap.forEach(child => {
+    get(ref(db,'users')).then(snap=>{
+      snap.forEach(child=>{
         const u = child.val();
-        if (u.status === 'pendiente') {
+        if(u.status === 'pendiente'){
           const div = document.createElement('div');
           div.innerHTML = `${u.email} <button onclick='approveUser("${child.key}", this)'>Aprobar</button>`;
           list.appendChild(div);
@@ -81,10 +85,10 @@ document.getElementById('adminBtn').addEventListener('click', () => {
   });
 });
 
-window.approveUser = function(uid, btn) {
-  set(ref(db, 'users/' + uid + '/status'), 'aprobado')
-    .then(() => btn.parentNode.remove());
-};
+window.approveUser = function(uid, btn){
+  set(ref(db,'users/'+uid+'/status'),'aprobado')
+    .then(()=> btn.parentNode.remove());
+}
 
 /* ---------------- PLAYERS ---------------- */
 document.getElementById('toggleFormBtn').addEventListener('click', () => {
