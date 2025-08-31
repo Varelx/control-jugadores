@@ -154,4 +154,66 @@ function renderPlayerCard(id,p,container){
     <div class='player-details' id='details_${id}'>
       <div class="form-row"><small>Nacimiento:</small><input value='${p.birth}' onchange='updateField("${id}","birth",this.value)'></div>
       <div class="form-row"><small>Padre:</small><input value='${p.fatherName}' onchange='updateField("${id}","fatherName",this.value)'>
-      <small>Nº Tlf. Padre:</small><input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this
+      <small>Nº Tlf. Padre:</small><input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this.value)'></div>
+      <div class="form-row"><small>Madre:</small><input value='${p.motherName}' onchange='updateField("${id}","motherName",this.value)'>
+      <small>Nº Tlf. Madre:</small><input value='${p.motherPhone}' onchange='updateField("${id}","motherPhone",this.value)'></div>
+      <table id='attendance_${id}'><tr><th>Fecha</th><th>Asistencia</th></tr></table>
+      <button onclick='deletePlayer("${id}")'>🗑️ Borrar jugador</button>
+    </div>`;
+  container.appendChild(div);
+  renderAttendanceTable(id,p.attendance);
+  updateAttendanceButtons(id,p.attendance);
+}
+
+window.markAttendance = function(id,presente){
+  const today = new Date().toISOString().slice(0,10);
+  set(ref(db,'players/'+id+'/attendance/'+today),presente)
+    .then(()=> {
+      renderAttendanceTable(id, { [today]: presente });
+      updateAttendanceButtons(id, { [today]: presente });
+    });
+}
+
+window.renderAttendanceTable = function(id, attendance){
+  const table = document.getElementById('attendance_'+id);
+  table.innerHTML='<tr><th>Fecha</th><th>Asistencia</th></tr>';
+  for(const date in attendance){
+    const tr = document.createElement('tr');
+    tr.innerHTML=`<td>${date}</td><td>${attendance[date]?'✅':'❌'}</td>`;
+    table.appendChild(tr);
+  }
+}
+
+function updateAttendanceButtons(id, attendance){
+  const today = new Date().toISOString().slice(0,10);
+  const asistBtn = document.getElementById('asist_'+id);
+  const faltaBtn = document.getElementById('falta_'+id);
+  asistBtn.classList.remove('asistio'); faltaBtn.classList.remove('falto');
+  if(attendance && attendance[today]!==undefined){
+    if(attendance[today]) asistBtn.classList.add('asistio');
+    else faltaBtn.classList.add('falto');
+  }
+}
+
+window.toggleDetails = function(id){
+  const el = document.getElementById('details_'+id);
+  el.style.display = (el.style.display==='none'||el.style.display==='')?'block':'none';
+}
+
+window.updateField = function(id,field,value){ set(ref(db,'players/'+id+'/'+field),value); }
+
+window.deletePlayer = function(id){ if(confirm('¿Seguro?')) remove(ref(db,'players/'+id)); }
+
+window.filterCategory = function(cat){
+  currentCategory = cat;
+  document.querySelectorAll('.tabBtn').forEach(btn=>btn.classList.remove('active'));
+  const btn = Array.from(document.querySelectorAll('.tabBtn')).find(b=>b.textContent===cat);
+  if(btn) btn.classList.add('active');
+  loadPlayers();
+}
+
+window.switchView = function(){
+  const val = document.getElementById('menuSelect').value;
+  document.getElementById('app').style.display = (val==='players')?'block':'none';
+  document.getElementById('adminArea').style.display = (val==='admin')?'block':'none';
+}
