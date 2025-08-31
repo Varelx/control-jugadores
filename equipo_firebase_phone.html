@@ -19,23 +19,24 @@ header img { height:50px; margin-right:20px; }
 header h1 { font-size:1.6em; font-weight:600; margin:0; flex-grow:1; }
 #menuContainer { margin-left:auto; }
 .container { max-width:1200px; margin:20px auto; padding:20px; background:white; border-radius:12px; box-shadow:0 6px 15px rgba(0,0,0,0.1); }
-button { padding:10px 16px; border:none; border-radius:8px; background:#555; color:white; cursor:pointer; margin:2px; transition:0.3s; font-weight:500; }
+button { padding:10px 16px; border:none; border-radius:8px; cursor:pointer; margin:2px; transition:0.3s; font-weight:500; }
 button:hover { opacity:0.9; }
 input, select { padding:8px; margin:6px 0; border-radius:6px; border:1px solid #ccc; font-size:0.95em; width:100%; box-sizing:border-box; }
-.card { background:white; border:1px solid #ddd; border-radius:10px; padding:15px; margin:10px 0; box-shadow:0 4px 8px rgba(0,0,0,0.05); transition:0.3s; }
+.card { background:white; border:1px solid #ddd; border-radius:10px; padding:15px; margin:10px 0; box-shadow:0 4px 8px rgba(0,0,0,0.05); cursor:pointer; transition:0.3s; }
 .card:hover { box-shadow:0 6px 12px rgba(0,0,0,0.1); }
 .tabs { margin:10px 0; display:flex; flex-wrap:wrap; gap:5px; }
-.tabs button { flex:1; background:#c8e6c9; color:#2e7d32; }
+.tabs button { flex:1; background:#a5d6a7; color:white; }
 .tabs button.active { background:#2e7d32; color:white; }
 .player-details { display:none; margin-top:10px; background:#f7fff7; padding:10px; border-radius:8px; }
 .attendance-buttons { display:flex; flex-wrap:wrap; gap:5px; margin:5px 0; }
-.attendance-buttons button { flex:1; background:#ccc; }
-.attendance-buttons button.asistencia { background:#4caf50; }
-.attendance-buttons button.noasistencia { background:#f44336; }
+.attendance-buttons button { flex:1; background:#9e9e9e; color:white; }
 table { width:100%; border-collapse:collapse; margin-top:10px; }
 th, td { border:1px solid #ccc; padding:6px 10px; text-align:center; font-size:0.9em; }
-th { background:#c8e6c9; }
-td[contenteditable="true"] { background:#fffde7; }
+th { background:#a5d6a7; color:white; }
+.addBtn { background:#2e7d32; color:white; font-weight:600; }
+.addBtn:hover { background:#4caf50; }
+.editBtn { background:#2e7d32; color:white; font-weight:600; transition:0.3s; }
+.editBtn:hover, .editBtn:active { background:#4caf50; }
 @media (max-width:768px) {
   header { flex-direction:column; align-items:flex-start; }
   header h1 { margin:10px 0 0 0; }
@@ -77,20 +78,7 @@ td[contenteditable="true"] { background:#fffde7; }
     <button class="tabBtn" onclick="filterCategory('M18')">M18</button>
   </div>
 
-  <!-- Botón Añadir Jugador -->
-<button id="toggleFormBtn" class="addPlayerBtn">➕ Añadir jugador</button>
-
-<style>
-.addPlayerBtn {
-  background:#4caf50 !important; /* verde */
-  color:white !important;
-  font-weight:600;
-}
-.addPlayerBtn:hover {
-  background:#388e3c !important; /* verde más oscuro al pasar el ratón */
-}
-</style>
-
+  <button id="toggleFormBtn" class="addBtn">➕ Añadir jugador</button>
 
   <div id="addPlayerForm" style="display:none; margin-top:10px;">
     <input type="text" id="playerName" placeholder="Nombre completo">
@@ -104,17 +92,16 @@ td[contenteditable="true"] { background:#fffde7; }
       <option value="M16">M16</option>
       <option value="M18">M18</option>
     </select>
-    <button onclick="addPlayer()">Guardar jugador</button>
+    <button onclick="addPlayer()" class="addBtn">Guardar jugador</button>
   </div>
 
   <div id="playersContainer"></div>
 </div>
 
-<!-- Área Admin -->
 <div id="adminArea" style="display:none;">
   <h2>Área de Administración</h2>
   <input type="password" id="adminPassword" placeholder="Contraseña">
-  <button onclick="showAdmin()">Acceder</button>
+  <button onclick="showAdmin()" class="addBtn">Acceder</button>
   <div id="requestsList" style="margin-top:10px;"></div>
 </div>
 
@@ -130,14 +117,12 @@ document.addEventListener('DOMContentLoaded', () => {
     appId: "1:345003884874:web:51308a576a636b5a9741b3",
     measurementId: "G-1RR2CLEPL1"
   };
-
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
   const auth = firebase.auth();
   const MASTER_PASSWORD = '123123';
   let currentCategory = 'all';
 
-  // Registro y login
   function register(){
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -146,11 +131,13 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('authMsg').innerText='Registrado, pendiente de aprobación';
     }).catch(e=>document.getElementById('authMsg').innerText=e.message);
   }
+
   function login(){
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     auth.signInWithEmailAndPassword(email,password).catch(e=>document.getElementById('authMsg').innerText=e.message);
   }
+
   auth.onAuthStateChanged(user=>{
     if(user){
       db.ref('users/'+user.uid+'/status').once('value',snap=>{
@@ -167,7 +154,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Área admin
   function showAdmin(){
     const pass = document.getElementById('adminPassword').value;
     if(pass!==MASTER_PASSWORD){alert('Contraseña incorrecta'); return;}
@@ -177,15 +163,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const u = child.val();
         if(u.status==='pendiente'){
           const div = document.createElement('div');
-          div.innerHTML=`${u.email} <button onclick='approveUser("${child.key}")'>Aprobar</button>`;
+          div.innerHTML=`${u.email} <button onclick='approveUser("${child.key}")' class="addBtn">Aprobar</button>`;
           document.getElementById('requestsList').appendChild(div);
         }
       });
     });
   }
+
   function approveUser(uid){ db.ref('users/'+uid+'/status').set('aprobado'); }
 
-  // Jugadores
   function addPlayer(){
     const name = document.getElementById('playerName').value;
     const birth = document.getElementById('playerBirth').value;
@@ -196,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const category = document.getElementById('categorySelect').value;
     if(!name) return alert('Nombre requerido');
     const ref = db.ref('players').push();
-    ref.set({name,birth,fatherName,fatherPhone,motherName,motherPhone,category,attendance:{}});
+    ref.set({name,birth,fatherName,fatherPhone,motherName,motherPhone,category,attendance:{},notes:{}});
     ['playerName','playerBirth','fatherName','fatherPhone','motherName','motherPhone'].forEach(id=>document.getElementById(id).value='');
   }
 
@@ -207,109 +193,104 @@ document.addEventListener('DOMContentLoaded', () => {
       snap.forEach(child => {
         const p = child.val();
         const id = child.key;
-        if (currentCategory === 'all' || p.category === currentCategory) {
+        if(currentCategory==='all' || p.category===currentCategory){
           const div = document.createElement('div');
-          div.className = 'card';
-          div.innerHTML = `
+          div.className='card';
+          div.innerHTML=`
             <div class='info'>
               <strong>${p.name}</strong>
               <div class='attendance-buttons'>
-                <button onclick='markAttendance("${id}",true)'>Asistencia</button>
-                <button onclick='markAttendance("${id}",false)'>No asistencia</button>
+                <button onclick='markAttendance("${id}",true,this)'>✅ Asistencia</button>
+                <button onclick='markAttendance("${id}",false,this)'>❌ No asistencia</button>
               </div>
-              <button onclick='toggleDetails("${id}")'>Ver / Editar</button>
+              <button class='editBtn' onclick='toggleDetails("${id}")'>Ver / Editar</button>
             </div>
             <div class='player-details' id='details_${id}' style='display:none'>
               Nacimiento: <input value='${p.birth}' onchange='updateField("${id}","birth",this.value)'><br>
               Padre: <input value='${p.fatherName}' onchange='updateField("${id}","fatherName",this.value)'> 
-              Nº Tlf. Padre<input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this.value)'><br>
+              (<input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this.value)'>)<br>
               Madre: <input value='${p.motherName}' onchange='updateField("${id}","motherName",this.value)'> 
-              Nº Tlf. Madre<input value='${p.motherPhone}' onchange='updateField("${id}","motherPhone",this.value)'><br>
+              (<input value='${p.motherPhone}' onchange='updateField("${id}","motherPhone",this.value)'>)<br>
               <table id='attendance_${id}'>
-                <tr><th>Fecha</th><th>Asistencia</th><th>Notas</th></tr>
+                <tr><th>Fecha entrenamiento</th><th>Asistencia</th><th>Notas</th></tr>
               </table>
-              <button onclick='deletePlayer("${id}")'>🗑️ Borrar jugador</button>
+              <button onclick='deletePlayer("${id}")' class="addBtn">🗑️ Borrar jugador</button>
             </div>
           `;
           container.appendChild(div);
-          renderAttendanceTable(id, p.attendance || {});
+          renderAttendanceTable(id,p.attendance,p.notes);
         }
       });
     });
   }
 
-  function markAttendance(id,presente){
+  function markAttendance(id,presente,btn){
     const today = new Date().toISOString().slice(0,10);
-    db.ref('players/'+id+'/attendance/'+today).set({
-      presente: presente,
-      nota: "" // crea el campo nota editable
-    }).then(()=>loadPlayers());
+    db.ref('players/'+id+'/attendance/'+today).set(presente).then(()=>{
+      loadPlayers();
+    });
   }
 
-  function renderAttendanceTable(id, attendance){
+  function renderAttendanceTable(id,attendance,notes){
     const table = document.getElementById('attendance_'+id);
-    table.innerHTML = '<tr><th>Fecha</th><th>Asistencia</th><th>Notas</th></tr>';
-    for(const date in attendance){
-      const a = attendance[date];
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${date}</td>
-        <td>${a.presente ? '✅' : '❌'}</td>
-        <td contenteditable="true" onblur="updateNote('${id}','${date}',this.innerText)">
-          ${a.nota || ''}
-        </td>`;
+    table.innerHTML='<tr><th>Fecha entrenamiento</th><th>Asistencia</th><th>Notas</th></tr>';
+    const allDates = new Set([...Object.keys(attendance), ...Object.keys(notes)]);
+    Array.from(allDates).sort().forEach(date=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${date}</td>
+        <td>${attendance[date] ? '✅' : attendance[date]===false ? '❌' : ''}</td>
+        <td><input value='${notes[date]||''}' onchange='updateNote("${id}","${date}",this.value)'></td>`;
       table.appendChild(tr);
-    }
+    });
   }
 
   function updateNote(id,date,value){
-    db.ref('players/'+id+'/attendance/'+date+'/nota').set(value);
+    db.ref('players/'+id+'/notes/'+date).set(value);
   }
 
   function toggleDetails(id){
-    const el = document.getElementById('details_'+id);
-    el.style.display = (el.style.display==='none')?'block':'none';
+    const el=document.getElementById('details_'+id);
+    el.style.display=(el.style.display==='none')?'block':'none';
   }
-  function updateField(id,field,value){
-    db.ref('players/'+id+'/'+field).set(value);
-  }
+
+  function updateField(id,field,value){ db.ref('players/'+id+'/'+field).set(value); }
+
   function deletePlayer(id){
     if(confirm('¿Seguro que quieres borrar este jugador?')){
       db.ref('players/'+id).remove();
     }
   }
+
   function filterCategory(cat){
     currentCategory=cat;
     document.querySelectorAll('.tabBtn').forEach(btn=>btn.classList.remove('active'));
-    Array.from(document.querySelectorAll('.tabBtn')).find(b=>b.textContent===cat).classList.add('active');
+    Array.from(document.querySelectorAll('.tabBtn')).find(b=>b.textContent===cat || cat==='Todos').classList.add('active');
     loadPlayers();
   }
 
-  // Menú desplegable
-  window.switchView = function(){
-    const val = document.getElementById('menuSelect').value;
-    document.getElementById('app').style.display = (val==='players')?'block':'none';
-    document.getElementById('adminArea').style.display = (val==='admin')?'block':'none';
+  window.switchView=function(){
+    const val=document.getElementById('menuSelect').value;
+    document.getElementById('app').style.display=(val==='players')?'block':'none';
+    document.getElementById('adminArea').style.display=(val==='admin')?'block':'none';
   }
 
-  document.getElementById('toggleFormBtn').addEventListener('click', () => {
-    const form = document.getElementById('addPlayerForm');
-    form.style.display = (form.style.display === 'none') ? 'block' : 'none';
+  document.getElementById('toggleFormBtn').addEventListener('click',()=>{
+    const form=document.getElementById('addPlayerForm');
+    form.style.display=(form.style.display==='none')?'block':'none';
   });
 
-  // Exponer funciones globales
-  window.register = register;
-  window.login = login;
-  window.showAdmin = showAdmin;
-  window.approveUser = approveUser;
-  window.addPlayer = addPlayer;
-  window.markAttendance = markAttendance;
-  window.renderAttendanceTable = renderAttendanceTable;
-  window.updateNote = updateNote;
-  window.toggleDetails = toggleDetails;
-  window.updateField = updateField;
-  window.deletePlayer = deletePlayer;
-  window.filterCategory = filterCategory;
+  window.register=register;
+  window.login=login;
+  window.showAdmin=showAdmin;
+  window.approveUser=approveUser;
+  window.addPlayer=addPlayer;
+  window.markAttendance=markAttendance;
+  window.renderAttendanceTable=renderAttendanceTable;
+  window.toggleDetails=toggleDetails;
+  window.updateField=updateField;
+  window.deletePlayer=deletePlayer;
+  window.filterCategory=filterCategory;
+  window.updateNote=updateNote;
 });
 </script>
 </body>
