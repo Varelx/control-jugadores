@@ -13,88 +13,34 @@
 <!-- Estilos -->
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-* { box-sizing:border-box; }
-body { font-family:'Quicksand', sans-serif; background:#fafafa; margin:0; padding:0; }
-
-/* Barra superior */
-header {
-  position:sticky; top:0; z-index:100;
-  background:white; border-bottom:1px solid #dbdbdb;
-  display:flex; align-items:center; justify-content:space-between;
-  padding:8px 14px;
-}
-header img { height:40px; }
-header h1 { font-size:1.3em; margin:0; color:#262626; font-weight:600; }
-#menuContainer select { border:none; background:none; font-size:1em; }
-
-/* Contenedor principal tipo feed */
-.container { max-width:600px; margin:20px auto; padding:0 10px; }
-
-/* Botones principales (verde) */
-button {
-  border:none; border-radius:8px;
-  padding:8px 14px;
-  background:#2e7d32; color:white;
-  font-weight:600; cursor:pointer;
-}
-button:hover { background:#1b5e20; }
-
-/* Inputs y selects */
-input, select {
-  width:100%; padding:10px; margin:6px 0;
-  border:1px solid #dbdbdb; border-radius:6px; font-size:0.95em;
-}
-
-/* Tarjetas tipo post */
-.card {
-  background:white;
-  border:1px solid #dbdbdb;
-  border-radius:12px;
-  margin-bottom:20px;
-  padding:15px;
-}
-.card strong { font-size:1.1em; }
-.card .info { display:flex; flex-direction:column; gap:8px; }
-
-/* Detalles ocultos */
-.player-details {
-  display:none; margin-top:12px;
-  border-top:1px solid #eee; padding-top:12px;
-}
-
-/* Tabs */
-.tabs { display:flex; gap:5px; margin:10px 0; }
-.tabs button {
-  flex:1; background:#efefef; color:#262626;
-}
+body { font-family: 'Quicksand', sans-serif; background:#f0f8f5; margin:0; padding:0; }
+header { display:flex; align-items:center; background:#2e7d32; color:white; padding:10px 20px; flex-wrap:wrap; }
+header img { height:50px; margin-right:20px; }
+header h1 { font-size:1.6em; font-weight:600; margin:0; flex-grow:1; }
+#menuContainer { margin-left:auto; }
+.container { max-width:1200px; margin:20px auto; padding:20px; background:white; border-radius:12px; box-shadow:0 6px 15px rgba(0,0,0,0.1); }
+button { padding:10px 16px; border:none; border-radius:8px; background:#555; color:white; cursor:pointer; margin:2px; transition:0.3s; font-weight:500; }
+button:hover { opacity:0.9; }
+input, select { padding:8px; margin:6px 0; border-radius:6px; border:1px solid #ccc; font-size:0.95em; width:100%; box-sizing:border-box; }
+.card { background:white; border:1px solid #ddd; border-radius:10px; padding:15px; margin:10px 0; box-shadow:0 4px 8px rgba(0,0,0,0.05); transition:0.3s; }
+.card:hover { box-shadow:0 6px 12px rgba(0,0,0,0.1); }
+.tabs { margin:10px 0; display:flex; flex-wrap:wrap; gap:5px; }
+.tabs button { flex:1; background:#c8e6c9; color:#2e7d32; }
 .tabs button.active { background:#2e7d32; color:white; }
-
-/* Botones de asistencia */
-.attendance-buttons { display:flex; gap:5px; }
-.attendance-buttons button {
-  flex:1;
-  background:#e0e0e0;
-  color:#333;
-  border:1px solid #ccc;
-}
-.attendance-buttons button.asistio {
-  background:#2e7d32; color:white; border:none;
-}
-.attendance-buttons button.falto {
-  background:#c62828; color:white; border:none;
-}
-
-/* Tablas */
+.player-details { display:none; margin-top:10px; background:#f7fff7; padding:10px; border-radius:8px; }
+.attendance-buttons { display:flex; flex-wrap:wrap; gap:5px; margin:5px 0; }
+.attendance-buttons button { flex:1; background:#ccc; }
+.attendance-buttons button.asistencia { background:#4caf50; }
+.attendance-buttons button.noasistencia { background:#f44336; }
 table { width:100%; border-collapse:collapse; margin-top:10px; }
-th, td {
-  border:1px solid #ccc; padding:6px; text-align:center;
-  font-size:0.9em;
-}
-th { background:#f5f5f5; }
-
-/* Responsive */
+th, td { border:1px solid #ccc; padding:6px 10px; text-align:center; font-size:0.9em; }
+th { background:#c8e6c9; }
+td[contenteditable="true"] { background:#fffde7; }
 @media (max-width:768px) {
-  header { flex-direction:row; }
+  header { flex-direction:column; align-items:flex-start; }
+  header h1 { margin:10px 0 0 0; }
+  .tabs { flex-direction:column; }
+  .attendance-buttons { flex-direction:column; }
 }
 </style>
 </head>
@@ -112,7 +58,7 @@ th { background:#f5f5f5; }
 
 <div class="container">
 
-<!-- Auth -->
+<!-- Registro / Login -->
 <div id="authBox">
   <h2>Entrenadores</h2>
   <input type="email" id="email" placeholder="Email">
@@ -122,14 +68,17 @@ th { background:#f5f5f5; }
   <p id="authMsg"></p>
 </div>
 
-<!-- App -->
+<!-- Gestión de Jugadores -->
 <div id="app" style="display:none;">
+  <h2>Gestión de Jugadores</h2>
   <div class="tabs">
     <button class="tabBtn" onclick="filterCategory('M14')">M14</button>
     <button class="tabBtn" onclick="filterCategory('M16')">M16</button>
     <button class="tabBtn" onclick="filterCategory('M18')">M18</button>
   </div>
+
   <button id="toggleFormBtn">➕ Añadir jugador</button>
+
   <div id="addPlayerForm" style="display:none; margin-top:10px;">
     <input type="text" id="playerName" placeholder="Nombre completo">
     <input type="date" id="playerBirth">
@@ -144,6 +93,7 @@ th { background:#f5f5f5; }
     </select>
     <button onclick="addPlayer()">Guardar jugador</button>
   </div>
+
   <div id="playersContainer"></div>
 </div>
 
@@ -174,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const MASTER_PASSWORD = '123123';
   let currentCategory = 'all';
 
+  // Registro y login
   function register(){
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -194,12 +145,16 @@ document.addEventListener('DOMContentLoaded', () => {
           document.getElementById('authBox').style.display='none';
           document.getElementById('app').style.display='block';
           document.getElementById('menuContainer').style.display='block';
+          document.getElementById('menuSelect').value = 'players';
           loadPlayers();
         }
       });
-    } else { document.getElementById('menuContainer').style.display='none'; }
+    } else {
+      document.getElementById('menuContainer').style.display='none';
+    }
   });
 
+  // Área admin
   function showAdmin(){
     const pass = document.getElementById('adminPassword').value;
     if(pass!==MASTER_PASSWORD){alert('Contraseña incorrecta'); return;}
@@ -217,6 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function approveUser(uid){ db.ref('users/'+uid+'/status').set('aprobado'); }
 
+  // Jugadores
   function addPlayer(){
     const name = document.getElementById('playerName').value;
     const birth = document.getElementById('playerBirth').value;
@@ -245,63 +201,51 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class='info'>
               <strong>${p.name}</strong>
               <div class='attendance-buttons'>
-                <button id='asist_${id}' onclick='markAttendance("${id}",true)'>✅ Asistencia</button>
-                <button id='falta_${id}' onclick='markAttendance("${id}",false)'>❌ No asistencia</button>
+                <button onclick='markAttendance("${id}",true)'>Asistencia</button>
+                <button onclick='markAttendance("${id}",false)'>No asistencia</button>
               </div>
               <button onclick='toggleDetails("${id}")'>Ver / Editar</button>
             </div>
-            <div class='player-details' id='details_${id}'>
-              <small>Nacimiento:</small> <input value='${p.birth}' onchange='updateField("${id}","birth",this.value)'><br>
-              <small>Padre:</small> <input value='${p.fatherName}' onchange='updateField("${id}","fatherName",this.value)'> 
+            <div class='player-details' id='details_${id}' style='display:none'>
+              Nacimiento: <input value='${p.birth}' onchange='updateField("${id}","birth",this.value)'><br>
+              Padre: <input value='${p.fatherName}' onchange='updateField("${id}","fatherName",this.value)'> 
               (<input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this.value)'>)<br>
-              <small>Madre:</small> <input value='${p.motherName}' onchange='updateField("${id}","motherName",this.value)'> 
+              Madre: <input value='${p.motherName}' onchange='updateField("${id}","motherName",this.value)'> 
               (<input value='${p.motherPhone}' onchange='updateField("${id}","motherPhone",this.value)'>)<br>
-              <table id='attendance_${id}'><tr><th>Fecha</th><th>Asistencia</th></tr></table>
+              <table id='attendance_${id}'>
+                <tr><th>Fecha</th><th>Asistencia</th><th>Notas</th></tr>
+              </table>
               <button onclick='deletePlayer("${id}")'>🗑️ Borrar jugador</button>
-            </div>`;
+            </div>
+          `;
           container.appendChild(div);
-          renderAttendanceTable(id, p.attendance);
-          updateAttendanceButtons(id, p.attendance);
+          renderAttendanceTable(id, p.attendance || {});
         }
       });
     });
   }
 
-  function markAttendance(id, presente){
-  const today = new Date().toISOString().slice(0,10);
-  const note = prompt("Añadir una nota (opcional):") || "";
-  db.ref('players/'+id+'/attendance/'+today).set({
-    presente: presente,
-    nota: note
-  }).then(()=>loadPlayers());
-}
+  function markAttendance(id,presente){
+    const today = new Date().toISOString().slice(0,10);
+    db.ref('players/'+id+'/attendance/'+today).set({
+      presente: presente,
+      nota: "" // crea el campo nota editable
+    }).then(()=>loadPlayers());
+  }
 
   function renderAttendanceTable(id, attendance){
-  const table = document.getElementById('attendance_'+id);
-  table.innerHTML = '<tr><th>Fecha</th><th>Asistencia</th><th>Notas</th></tr>';
-  for(const date in attendance){
-    const tr = document.createElement('tr');
-    const a = attendance[date];
-    tr.innerHTML = `
-      <td>${date}</td>
-      <td>${a.presente ? '✅' : '❌'}</td>
-      <td contenteditable="true" 
-          onblur="updateNote('${id}','${date}',this.innerText)">
+    const table = document.getElementById('attendance_'+id);
+    table.innerHTML = '<tr><th>Fecha</th><th>Asistencia</th><th>Notas</th></tr>';
+    for(const date in attendance){
+      const a = attendance[date];
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${date}</td>
+        <td>${a.presente ? '✅' : '❌'}</td>
+        <td contenteditable="true" onblur="updateNote('${id}','${date}',this.innerText)">
           ${a.nota || ''}
-      </td>`;
-    table.appendChild(tr);
-  }
-}
-
-  function updateAttendanceButtons(id, attendance){
-    const today = new Date().toISOString().slice(0,10);
-    const asistBtn = document.getElementById('asist_'+id);
-    const faltaBtn = document.getElementById('falta_'+id);
-    asistBtn.classList.remove('asistio'); 
-    faltaBtn.classList.remove('falto');
-    if(attendance && attendance[today]!==undefined){
-      if(attendance[today]) asistBtn.classList.add('asistio');
-      else faltaBtn.classList.add('falto');
+        </td>`;
+      table.appendChild(tr);
     }
   }
 
@@ -311,10 +255,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function toggleDetails(id){
     const el = document.getElementById('details_'+id);
-    el.style.display = (el.style.display==='none' || el.style.display==='')?'block':'none';
+    el.style.display = (el.style.display==='none')?'block':'none';
   }
-  function updateField(id,field,value){ db.ref('players/'+id+'/'+field).set(value); }
-  function deletePlayer(id){ if(confirm('¿Seguro?')) db.ref('players/'+id).remove(); }
+  function updateField(id,field,value){
+    db.ref('players/'+id+'/'+field).set(value);
+  }
+  function deletePlayer(id){
+    if(confirm('¿Seguro que quieres borrar este jugador?')){
+      db.ref('players/'+id).remove();
+    }
+  }
   function filterCategory(cat){
     currentCategory=cat;
     document.querySelectorAll('.tabBtn').forEach(btn=>btn.classList.remove('active'));
@@ -322,16 +272,19 @@ document.addEventListener('DOMContentLoaded', () => {
     loadPlayers();
   }
 
+  // Menú desplegable
   window.switchView = function(){
     const val = document.getElementById('menuSelect').value;
     document.getElementById('app').style.display = (val==='players')?'block':'none';
     document.getElementById('adminArea').style.display = (val==='admin')?'block':'none';
   }
+
   document.getElementById('toggleFormBtn').addEventListener('click', () => {
     const form = document.getElementById('addPlayerForm');
-    form.style.display = (form.style.display==='none'||form.style.display==='') ? 'block':'none';
+    form.style.display = (form.style.display === 'none') ? 'block' : 'none';
   });
 
+  // Exponer funciones globales
   window.register = register;
   window.login = login;
   window.showAdmin = showAdmin;
@@ -339,6 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addPlayer = addPlayer;
   window.markAttendance = markAttendance;
   window.renderAttendanceTable = renderAttendanceTable;
+  window.updateNote = updateNote;
   window.toggleDetails = toggleDetails;
   window.updateField = updateField;
   window.deletePlayer = deletePlayer;
