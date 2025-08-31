@@ -121,15 +121,34 @@ input, select {
 }
 
 /* Tablas */
-table { width:100%; border-collapse:collapse; margin-top:10px; font-size:0.9em; }
-th, td { border:1px solid #ccc; padding:6px; text-align:center; }
-th { background:#f5f5f5; }
+.player-details table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 0.9em;
+  table-layout: fixed;
+}
+.player-details table th,
+.player-details table td {
+  border: 1px solid #ccc;
+  padding: 6px;
+  text-align: center;
+  word-wrap: break-word;
+}
+.player-details table th {
+  background: #f5f5f5;
+}
 
-/* Responsive */
+/* Scroll horizontal en móvil para tablas */
 @media (max-width:768px) {
   header { flex-direction:row; }
   .player-details .form-row { flex-direction: column; align-items:flex-start; }
   .player-details .form-row small { width:100%; margin-bottom:4px; }
+  .player-details table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
 }
 </style>
 </head>
@@ -272,7 +291,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const ref = db.ref('players').push();
     ref.set({name,birth,fatherName,fatherPhone,motherName,motherPhone,category,attendance:{}});
     ['playerName','playerBirth','fatherName','fatherPhone','motherName','motherPhone'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('addPlayerForm').style.display='none';
   }
 
   function loadPlayers(){
@@ -297,9 +315,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class='player-details' id='details_${id}'>
               <div class="form-row"><small>Nacimiento:</small><input value='${p.birth}' onchange='updateField("${id}","birth",this.value)'></div>
               <div class="form-row"><small>Padre:</small><input value='${p.fatherName}' onchange='updateField("${id}","fatherName",this.value)'>
-              <small>Tlf. Padre:</small><input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this.value)'></div>
+              <small>Nº Tlf. Padre:</small><input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this.value)'></div>
               <div class="form-row"><small>Madre:</small><input value='${p.motherName}' onchange='updateField("${id}","motherName",this.value)'>
-              <small>Tlf. Madre:</small><input value='${p.motherPhone}' onchange='updateField("${id}","motherPhone",this.value)'></div>
+              <small>Nº Tlf. Madre:</small><input value='${p.motherPhone}' onchange='updateField("${id}","motherPhone",this.value)'></div>
               <table id='attendance_${id}'><tr><th>Fecha</th><th>Asistencia</th></tr></table>
               <button onclick='deletePlayer("${id}")'>🗑️ Borrar jugador</button>
             </div>`;
