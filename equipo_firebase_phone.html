@@ -98,12 +98,29 @@ input, select {
   border-radius: 6px;
 }
 
-/* Tabs */
-.tabs { display:flex; gap:5px; margin:10px 0; }
-.tabs button {
-  flex:1; background:#efefef; color:#262626;
+/* Tabs con scroll horizontal en móviles */
+.tabs {
+  display: flex;
+  gap: 5px;
+  margin: 10px 0;
+  overflow-x: auto;      /* habilita scroll horizontal */
+  -webkit-overflow-scrolling: touch; /* suaviza scroll en iOS */
 }
-.tabs button.active { background:#2e7d32; color:white; }
+
+.tabs button {
+  flex: 0 0 auto;       /* evita que los botones se encojan */
+  padding: 8px 12px;
+  white-space: nowrap;  /* evita que el texto se rompa */
+  background:#efefef;
+  color:#262626;
+  border-radius: 6px;
+  font-size: 0.95em;
+}
+
+.tabs button.active {
+  background:#2e7d32;
+  color:white;
+}
 
 /* Botones de asistencia */
 .attendance-buttons { display:flex; gap:5px; }
