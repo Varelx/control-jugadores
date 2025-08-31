@@ -77,7 +77,20 @@ td[contenteditable="true"] { background:#fffde7; }
     <button class="tabBtn" onclick="filterCategory('M18')">M18</button>
   </div>
 
-  <button id="toggleFormBtn">➕ Añadir jugador</button>
+  <!-- Botón Añadir Jugador -->
+<button id="toggleFormBtn" class="addPlayerBtn">➕ Añadir jugador</button>
+
+<style>
+.addPlayerBtn {
+  background:#4caf50 !important; /* verde */
+  color:white !important;
+  font-weight:600;
+}
+.addPlayerBtn:hover {
+  background:#388e3c !important; /* verde más oscuro al pasar el ratón */
+}
+</style>
+
 
   <div id="addPlayerForm" style="display:none; margin-top:10px;">
     <input type="text" id="playerName" placeholder="Nombre completo">
@@ -209,9 +222,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class='player-details' id='details_${id}' style='display:none'>
               Nacimiento: <input value='${p.birth}' onchange='updateField("${id}","birth",this.value)'><br>
               Padre: <input value='${p.fatherName}' onchange='updateField("${id}","fatherName",this.value)'> 
-              (<input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this.value)'>)<br>
+              Nº Tlf. Padre<input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this.value)'><br>
               Madre: <input value='${p.motherName}' onchange='updateField("${id}","motherName",this.value)'> 
-              (<input value='${p.motherPhone}' onchange='updateField("${id}","motherPhone",this.value)'>)<br>
+              Nº Tlf. Madre<input value='${p.motherPhone}' onchange='updateField("${id}","motherPhone",this.value)'><br>
               <table id='attendance_${id}'>
                 <tr><th>Fecha</th><th>Asistencia</th><th>Notas</th></tr>
               </table>
