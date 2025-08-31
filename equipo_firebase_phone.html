@@ -10,7 +10,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-<!-- Estilos tipo Instagram -->
+<!-- Estilos -->
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 * { box-sizing:border-box; }
@@ -30,15 +30,14 @@ header h1 { font-size:1.3em; margin:0; color:#262626; font-weight:600; }
 /* Contenedor principal tipo feed */
 .container { max-width:600px; margin:20px auto; padding:0 10px; }
 
-/* Botones estilo instagram */
+/* Botones principales (verde) */
 button {
   border:none; border-radius:8px;
   padding:8px 14px;
-  background:#0095f6; color:white;
+  background:#2e7d32; color:white;
   font-weight:600; cursor:pointer;
 }
-button:hover { background:#0077cc; }
-.attendance-buttons button { flex:1; margin:2px; }
+button:hover { background:#1b5e20; }
 
 /* Inputs y selects */
 input, select {
@@ -68,7 +67,22 @@ input, select {
 .tabs button {
   flex:1; background:#efefef; color:#262626;
 }
-.tabs button.active { background:#0095f6; color:white; }
+.tabs button.active { background:#2e7d32; color:white; }
+
+/* Botones de asistencia */
+.attendance-buttons { display:flex; gap:5px; }
+.attendance-buttons button {
+  flex:1;
+  background:#e0e0e0;
+  color:#333;
+  border:1px solid #ccc;
+}
+.attendance-buttons button.asistio {
+  background:#2e7d32; color:white; border:none;
+}
+.attendance-buttons button.falto {
+  background:#c62828; color:white; border:none;
+}
 
 /* Tablas */
 table { width:100%; border-collapse:collapse; margin-top:10px; }
@@ -231,8 +245,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class='info'>
               <strong>${p.name}</strong>
               <div class='attendance-buttons'>
-                <button onclick='markAttendance("${id}",true)'>✅ Asistencia</button>
-                <button onclick='markAttendance("${id}",false)'>❌ No asistencia</button>
+                <button id='asist_${id}' onclick='markAttendance("${id}",true)'>✅ Asistencia</button>
+                <button id='falta_${id}' onclick='markAttendance("${id}",false)'>❌ No asistencia</button>
               </div>
               <button onclick='toggleDetails("${id}")'>Ver / Editar</button>
             </div>
@@ -247,6 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`;
           container.appendChild(div);
           renderAttendanceTable(id, p.attendance);
+          updateAttendanceButtons(id, p.attendance);
         }
       });
     });
@@ -256,6 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const today = new Date().toISOString().slice(0,10);
     db.ref('players/'+id+'/attendance/'+today).set(presente).then(()=>loadPlayers());
   }
+
   function renderAttendanceTable(id, attendance){
     const table = document.getElementById('attendance_'+id);
     table.innerHTML = '<tr><th>Fecha</th><th>Asistencia</th></tr>';
@@ -265,6 +281,19 @@ document.addEventListener('DOMContentLoaded', () => {
       table.appendChild(tr);
     }
   }
+
+  function updateAttendanceButtons(id, attendance){
+    const today = new Date().toISOString().slice(0,10);
+    const asistBtn = document.getElementById('asist_'+id);
+    const faltaBtn = document.getElementById('falta_'+id);
+    asistBtn.classList.remove('asistio');
+    faltaBtn.classList.remove('falto');
+    if(attendance && attendance[today]!==undefined){
+      if(attendance[today]) asistBtn.classList.add('asistio');
+      else faltaBtn.classList.add('falto');
+    }
+  }
+
   function toggleDetails(id){
     const el = document.getElementById('details_'+id);
     el.style.display = (el.style.display==='none' || el.style.display==='')?'block':'none';
