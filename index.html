@@ -22,7 +22,7 @@
 
 <div class="container">
 
-  <!-- Auth -->
+  <!-- AUTH -->
   <div id="authBox">
     <h2>Entrenadores</h2>
     <input type="email" id="email" placeholder="Email">
@@ -32,10 +32,8 @@
     <p id="authMsg"></p>
   </div>
 
-  <!-- App -->
+  <!-- APP -->
   <div id="app" style="display:none;">
-
-    <!-- Tabs de categorías -->
     <div class="tabs">
       <button class="tabBtn" onclick="filterCategory('M8')">M8</button>
       <button class="tabBtn" onclick="filterCategory('M10')">M10</button>
@@ -46,11 +44,8 @@
       <button class="tabBtn" onclick="filterCategory('Masc')">Masc</button>
     </div>
 
-    <!-- Botón añadir jugador -->
     <button id="toggleFormBtn">➕ Añadir jugador</button>
-
-    <!-- Formulario jugador -->
-    <div id="addPlayerForm" class="modal" style="display:none;">
+    <div id="addPlayerForm" style="display:none;">
       <input type="text" id="playerName" placeholder="Nombre completo">
       <input type="date" id="playerBirth">
       <input type="text" id="fatherName" placeholder="Nombre padre">
@@ -69,11 +64,10 @@
       <button id="savePlayerBtn">Guardar jugador</button>
     </div>
 
-    <!-- Contenedor jugadores -->
     <div id="playersContainer"></div>
   </div>
 
-  <!-- Área Admin -->
+  <!-- ADMIN -->
   <div id="adminArea" style="display:none;">
     <h2>Área de Administración</h2>
     <button id="adminBtn">Acceder como Admin</button>
