@@ -112,8 +112,8 @@ function addPlayer(){
   const category = document.getElementById('categorySelect').value;
 
   if(!name){ alert('Nombre requerido'); return; }
-  if(!/^\d{9}$/.test(fatherPhone)){ alert('Teléfono padre no válido'); return; }
-  if(!/^\d{9}$/.test(motherPhone)){ alert('Teléfono madre no válido'); return; }
+  if(!/^\d{9}$/.test(fatherPhone)){ alert('Teléfono 1 no válido'); return; }
+  if(!/^\d{9}$/.test(motherPhone)){ alert('Teléfono 2 no válido'); return; }
   if(new Date(birth) > new Date()){ alert('Fecha de nacimiento inválida'); return; }
 
   const refPlayer = push(ref(db,'players'));
@@ -154,10 +154,10 @@ function renderPlayerCard(id, p, container){
     </div>
     <div class='player-details' id='details_${id}'>
       <div class="form-row"><small>Nacimiento:</small><input value='${p.birth}' onchange='updateField("${id}","birth",this.value)'></div>
-      <div class="form-row"><small>Padre:</small><input value='${p.fatherName}' onchange='updateField("${id}","fatherName",this.value)'>
-      <small>Nº Tlf. Padre:</small><input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this.value)'></div>
-      <div class="form-row"><small>Madre:</small><input value='${p.motherName}' onchange='updateField("${id}","motherName",this.value)'>
-      <small>Nº Tlf. Madre:</small><input value='${p.motherPhone}' onchange='updateField("${id}","motherPhone",this.value)'></div>
+      <div class="form-row"><small>Contacto 1:</small><input value='${p.fatherName}' onchange='updateField("${id}","fatherName",this.value)'>
+      <small>Nº Tlf. 1:</small><input value='${p.fatherPhone}' onchange='updateField("${id}","fatherPhone",this.value)'></div>
+      <div class="form-row"><small>Contacto 2:</small><input value='${p.motherName}' onchange='updateField("${id}","motherName",this.value)'>
+      <small>Nº Tlf. 2:</small><input value='${p.motherPhone}' onchange='updateField("${id}","motherPhone",this.value)'></div>
       <table id='attendance_${id}'><tr><th>Fecha</th><th>Asistencia</th></tr></table>
       <button onclick='deletePlayer("${id}")'>🗑️ Borrar jugador</button>
     </div>`;
