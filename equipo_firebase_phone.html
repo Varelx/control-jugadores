@@ -328,22 +328,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loadPlayers();
   }
   
-  /* Menú desplegable estilo integrado */
-#menuContainer select {
-  border: none; 
-  background: #2e7d32; /* mismo verde que el header */
-  font-size: 1em; 
-  color: white;
-  padding: 4px 8px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-/* Efecto al desplegar opciones */
-#menuContainer select option {
-  background: white; 
-  color: #2e7d32;
-}
   window.switchView = function(){
     const val = document.getElementById('menuSelect').value;
     document.getElementById('app').style.display = (val==='players')?'block':'none';
