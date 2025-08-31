@@ -267,31 +267,46 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function markAttendance(id,presente){
-    const today = new Date().toISOString().slice(0,10);
-    db.ref('players/'+id+'/attendance/'+today).set(presente).then(()=>loadPlayers());
-  }
+  function markAttendance(id, presente){
+  const today = new Date().toISOString().slice(0,10);
+  const note = prompt("Añadir una nota (opcional):") || "";
+  db.ref('players/'+id+'/attendance/'+today).set({
+    presente: presente,
+    nota: note
+  }).then(()=>loadPlayers());
+}
 
   function renderAttendanceTable(id, attendance){
-    const table = document.getElementById('attendance_'+id);
-    table.innerHTML = '<tr><th>Fecha</th><th>Asistencia</th></tr>';
-    for(const date in attendance){
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${date}</td><td>${attendance[date] ? '✅' : '❌'}</td>`;
-      table.appendChild(tr);
-    }
+  const table = document.getElementById('attendance_'+id);
+  table.innerHTML = '<tr><th>Fecha</th><th>Asistencia</th><th>Notas</th></tr>';
+  for(const date in attendance){
+    const tr = document.createElement('tr');
+    const a = attendance[date];
+    tr.innerHTML = `
+      <td>${date}</td>
+      <td>${a.presente ? '✅' : '❌'}</td>
+      <td contenteditable="true" 
+          onblur="updateNote('${id}','${date}',this.innerText)">
+          ${a.nota || ''}
+      </td>`;
+    table.appendChild(tr);
   }
+}
 
   function updateAttendanceButtons(id, attendance){
     const today = new Date().toISOString().slice(0,10);
     const asistBtn = document.getElementById('asist_'+id);
     const faltaBtn = document.getElementById('falta_'+id);
-    asistBtn.classList.remove('asistio');
+    asistBtn.classList.remove('asistio'); 
     faltaBtn.classList.remove('falto');
     if(attendance && attendance[today]!==undefined){
       if(attendance[today]) asistBtn.classList.add('asistio');
       else faltaBtn.classList.add('falto');
     }
+  }
+
+  function updateNote(id,date,value){
+    db.ref('players/'+id+'/attendance/'+date+'/nota').set(value);
   }
 
   function toggleDetails(id){
