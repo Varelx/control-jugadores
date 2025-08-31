@@ -26,7 +26,7 @@ document.getElementById('registerBtn').addEventListener('click', () => {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   createUserWithEmailAndPassword(auth, email, password)
-    .then(user => set(ref(db,'users/'+user.user.uid), {email, status:'pendiente'}))
+    .then(user => set(ref(db,'users/'+user.user.uid), {email, status:'pendiente', role:'user'}))
     .then(()=> showMsg('Registrado, pendiente de aprobación'))
     .catch(e => showMsg(e.message,'error'));
 });
@@ -38,21 +38,27 @@ document.getElementById('loginBtn').addEventListener('click', () => {
     .catch(e => showMsg(e.message,'error'));
 });
 
-onAuthStateChanged(auth,user=>{
+onAuthStateChanged(auth, user => {
   if(user){
     get(ref(db,'users/'+user.uid)).then(snap=>{
       const data = snap.val();
-      if(data && data.status==='aprobado'){
-        document.getElementById('authBox').style.display='none';
-        document.getElementById('app').style.display='block';
 
-        // Mostrar menú admin solo si es admin
-        if(data.role==='admin'){
-          document.getElementById('menuContainer').style.display='block';
-        }
+      document.getElementById('authBox').style.display='none';
+      document.getElementById('app').style.display='block';
 
-        loadPlayers();
+      // Mostrar menú a todos
+      document.getElementById('menuContainer').style.display='block';
+
+      // Solo admins ven "Área Administración"
+      const adminOption = Array.from(document.getElementById('menuSelect').options)
+                               .find(opt => opt.value==='admin');
+      if(data.role !== 'admin'){
+        adminOption.style.display = 'none';
+      } else {
+        adminOption.style.display = 'block';
       }
+
+      loadPlayers();
     });
   } else {
     document.getElementById('menuContainer').style.display='none';
@@ -69,17 +75,11 @@ document.getElementById('adminBtn').addEventListener('click', () => {
   const user = auth.currentUser;
   if(!user) return alert('No has iniciado sesión');
 
-  console.log("Usuario actual UID:", user.uid);
-
   get(ref(db,'users/' + user.uid)).then(snap=>{
     const data = snap.val();
-    console.log("Datos del usuario:", data);
-
     if(!data || data.role !== 'admin'){
       return alert('No tienes permisos de administrador');
     }
-
-    alert("¡Bienvenido Admin! Cargando solicitudes...");
 
     const list = document.getElementById('requestsList');
     list.innerHTML='';
@@ -98,6 +98,7 @@ document.getElementById('adminBtn').addEventListener('click', () => {
 
 window.approveUser = function(uid, btn){
   set(ref(db,'users/'+uid+'/status'),'aprobado')
+    .then(()=> set(ref(db,'users/'+uid+'/role'), 'user')) // asegura que tengan rol
     .then(()=> btn.parentNode.remove());
 }
 
@@ -220,4 +221,28 @@ window.switchView = function(){
   const val = document.getElementById('menuSelect').value;
   document.getElementById('app').style.display = (val==='players')?'block':'none';
   document.getElementById('adminArea').style.display = (val==='admin')?'block':'none';
+}
+
+// ---------------- CUSTOM SELECT ----------------
+const menuPreview = document.getElementById('menuPreview');
+const optionsDiv = document.querySelector('#menuSelectDiv .options');
+
+// Mostrar / ocultar opciones al click
+menuPreview.addEventListener('click', () => {
+  optionsDiv.style.display = optionsDiv.style.display === 'none' ? 'block' : 'none';
+});
+
+// Seleccionar opción
+document.querySelectorAll('#menuSelectDiv .options div').forEach(opt => {
+  opt.addEventListener('click', () => {
+    menuPreview.textContent = opt.textContent.split(' ')[0]; // solo emoji en preview
+    optionsDiv.style.display = 'none';
+    switchViewCustom(opt.dataset.value);
+  });
+});
+
+// Función para cambiar vistas
+function switchViewCustom(val){
+  document.getElementById('app').style.display = (val==='players') ? 'block' : 'none';
+  document.getElementById('adminArea').style.display = (val==='admin') ? 'block' : 'none';
 }
