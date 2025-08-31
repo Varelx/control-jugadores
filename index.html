@@ -34,6 +34,8 @@
 
   <!-- App -->
   <div id="app" style="display:none;">
+
+    <!-- Tabs de categorías -->
     <div class="tabs">
       <button class="tabBtn" onclick="filterCategory('M8')">M8</button>
       <button class="tabBtn" onclick="filterCategory('M10')">M10</button>
@@ -43,9 +45,11 @@
       <button class="tabBtn" onclick="filterCategory('M18')">M18</button>
       <button class="tabBtn" onclick="filterCategory('Masc')">Masc</button>
     </div>
+
+    <!-- Botón añadir jugador -->
     <button id="toggleFormBtn">➕ Añadir jugador</button>
 
-    <!-- Formulario modal -->
+    <!-- Formulario jugador -->
     <div id="addPlayerForm" class="modal" style="display:none;">
       <input type="text" id="playerName" placeholder="Nombre completo">
       <input type="date" id="playerBirth">
@@ -65,13 +69,19 @@
       <button id="savePlayerBtn">Guardar jugador</button>
     </div>
 
+    <!-- Contenedor jugadores -->
     <div id="playersContainer"></div>
   </div>
 
-<!-- Área Admin -->
-<div id="adminArea" style="display:none;">
-  <h2>Área de Administración</h2>
-  <!-- Botón que solo funciona para admins -->
-  <button id="adminBtn">Acceder</button>
-  <div id="requestsList" style="margin-top:10px;"></div>
+  <!-- Área Admin -->
+  <div id="adminArea" style="display:none;">
+    <h2>Área de Administración</h2>
+    <button id="adminBtn">Acceder como Admin</button>
+    <div id="requestsList" style="margin-top:10px;"></div>
+  </div>
+
 </div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
