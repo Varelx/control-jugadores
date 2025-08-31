@@ -33,7 +33,7 @@ input, select { width:100%; padding:10px; margin:6px 0; border:1px solid #dbdbdb
 /* Cards */
 .card { background:white; border:1px solid #dbdbdb; border-radius:12px; margin-bottom:20px; padding:15px; }
 .card strong { font-size:1.1em; }
-.card .info { display:flex; flex-direction:column; gap:8px; }
+.card .info { display:flex; flex-direction:column; gap:4px; }
 
 /* Player Details */
 .player-details { display:none; margin-top:12px; border-top:1px solid #eee; padding-top:12px; font-size:0.95em; line-height:1.4; color:#333; }
@@ -44,28 +44,4 @@ input, select { width:100%; padding:10px; margin:6px 0; border:1px solid #dbdbdb
 /* Attendance buttons */
 .attendance-buttons { display:flex; gap:5px; margin:5px 0; }
 .attendance-buttons button { flex:1; background:#e0e0e0; color:#333; border:1px solid #ccc; }
-.attendance-buttons button.asistio { background:#2e7d32; color:white; border:none; }
-.attendance-buttons button.falto { background:#c62828; color:white; border:none; }
-
-/* Tables */
-.player-details table { width:100%; border-collapse:collapse; margin-top:10px; font-size:0.9em; table-layout:fixed; }
-.player-details table th, .player-details table td { border:1px solid #ccc; padding:6px; text-align:center; word-wrap:break-word; }
-.player-details table th { background:#f5f5f5; }
-
-/* Forms */
-#addPlayerForm { background:#fff; padding:15px; border-radius:12px; border:1px solid #dbdbdb; margin:10px 0; }
-#addPlayerForm input, #addPlayerForm select { margin-bottom:10px; }
-
-/* Admin Area */
-#adminArea { background:#fff; padding:15px; border-radius:12px; border:1px solid #dbdbdb; margin-top:20px; }
-#requestsList div { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #eee; }
-
-/* Toggle Form Button */
-#toggleFormBtn { margin:10px 0; }
-
-/* Responsive */
-@media (max-width:768px) {
-  .player-details .form-row { flex-direction:column; align-items:flex-start; }
-  .player-details .form-row small { width:100%; margin-bottom:4px; }
-  .player-details table { display:block; overflow-x:auto; white-space:nowrap; }
-}
+.attendance-buttons button.asistio { background
