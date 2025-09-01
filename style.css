@@ -18,10 +18,12 @@ input, select { width:100%; padding:10px; margin:6px 0; border:1px solid #dbdbdb
 #authBox h2 { margin-top:0; text-align:center; color:#2e7d32; }
 #authMsg { text-align:center; font-weight:600; margin-top:10px; }
 
+/* Tabs */
 .tabs { display:flex; gap:5px; margin:10px 0; overflow-x:auto; -webkit-overflow-scrolling:touch; }
 .tabs button { flex:0 0 auto; padding:8px 12px; white-space:nowrap; background:#efefef; color:#262626; border-radius:6px; font-size:0.95em; }
 .tabs button.active { background:#2e7d32; color:white; }
 
+/* Cards Jugadores */
 .card { background:white; border:1px solid #dbdbdb; border-radius:12px; margin-bottom:20px; padding:15px; }
 .card strong { font-size:1.1em; }
 .card .info { display:flex; flex-direction:column; gap:4px; }
@@ -35,3 +37,20 @@ input, select { width:100%; padding:10px; margin:6px 0; border:1px solid #dbdbdb
 .attendance-buttons button { flex:1; background:#e0e0e0; color:#333; border:1px solid #ccc; }
 .attendance-buttons button.asistio { background:#2e7d32; color:white; }
 .attendance-buttons button.falto { background:red; color:white; }
+
+/* EJERCICIOS */
+#exercisesArea h2 { text-align:center; color:#2e7d32; margin-bottom:10px; }
+#exercisesArea .tabs { display:flex; gap:5px; margin:10px 0; overflow-x:auto; }
+#exercisesArea .tabs button { flex:0 0 auto; padding:6px 10px; background:#efefef; color:#262626; border-radius:6px; font-size:0.95em; }
+#exercisesArea .tabs button.active { background:#2e7d32; color:white; }
+
+#toggleExerciseFormBtn { margin-bottom:10px; }
+#addExerciseForm { background:white; padding:15px; border-radius:12px; border:1px solid #dbdbdb; }
+#addExerciseForm input, #addExerciseForm select { margin:6px 0; }
+
+#exercisesContainer .card { background:white; border:1px solid #dbdbdb; border-radius:12px; margin-bottom:20px; padding:15px; }
+#exercisesContainer .card .info { display:flex; flex-direction:column; gap:6px; }
+#exercisesContainer .card .info input[type=text] { width:100%; padding:8px; border-radius:6px; border:1px solid #ccc; font-size:0.95em; }
+#exercisesContainer img { max-width:100%; border-radius:6px; margin-bottom:5px; }
+#exercisesContainer button { margin-top:5px; }
+.exercise-details { display:none; margin-top:10px; }
