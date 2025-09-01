@@ -40,24 +40,26 @@ document.getElementById('loginBtn').addEventListener('click', () => {
     .catch(e => showMsg(e.message,'error'));
 });
 
-onAuthStateChanged(auth,user=>{
-  if(user){
-    get(ref(db,'users/'+user.uid)).then(snap=>{
+onAuthStateChanged(auth, user => {
+  if (user) {
+    get(ref(db,'users/'+user.uid)).then(snap => {
       const data = snap.val();
-      if(data && data.status==='aprobado'){
-        document.getElementById('authBox').style.display='none';
-        document.getElementById('app').style.display='block';
-        if(data.role==='admin'){
+      if (data && data.status === 'aprobado') {
+        document.getElementById('authBox').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        if (data.role==='admin') {
           document.getElementById('menuContainer').style.display='block';
         }
         loadPlayers();
-        loadExercises();
+        console.log(onValue); 
+        loadExercises(); // <-- aquí debe estar, después de definir db y onValue
       }
     });
   } else {
     document.getElementById('menuContainer').style.display='none';
   }
 });
+
 
 function showMsg(msg,type='info'){
   authMsg.innerText = msg;
