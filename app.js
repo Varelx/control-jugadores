@@ -200,7 +200,6 @@ window.toggleDetails = function(id){
 }
 
 window.updateField = function(id,field,value){ set(ref(db,'players/'+id+'/'+field),value); }
-
 window.deletePlayer = function(id){ if(confirm('¿Seguro?')) remove(ref(db,'players/'+id)); }
 
 window.filterCategory = function(cat){
@@ -211,63 +210,42 @@ window.filterCategory = function(cat){
   loadPlayers();
 }
 
-// ---------------- EJERCICIOS ----------------
-document.getElementById('toggleExerciseFormBtn').addEventListener('click', ()=>{
-  const form = document.getElementById('addExerciseForm');
-  form.style.display = (form.style.display==='none'||form.style.display==='')?'block':'none';
-});
-
-document.getElementById('saveExerciseBtn').addEventListener('click', addExercise);
-
-async function addExercise(){
-  const name = document.getElementById('exerciseName').value;
-  const file = document.getElementById('exerciseImage').files[0];
-  const material = document.getElementById('exerciseMaterial').value;
-  const space = document.getElementById('exerciseSpace').value;
-  const players = document.getElementById('exercisePlayers').value;
-  const moreInfo = document.getElementById('exerciseMoreInfo').value;
-  const category = document.getElementById('exerciseCategorySelect').value;
-
-  if(!name){ alert('Nombre requerido'); return; }
-
-  let imageUrl = '';
-  if(file){
-    const storageRef = sRef(storage, 'exercises/' + Date.now() + '_' + file.name);
-    await uploadBytes(storageRef, file);
-    imageUrl = await getDownloadURL(storageRef);
-  }
-
-  const exerciseRef = push(ref(db,'exercises'));
-  set(exerciseRef, {name, imageUrl, material, space, players, moreInfo, category});
-  clearForm(['exerciseName','exerciseImage','exerciseMaterial','exerciseSpace','exercisePlayers','exerciseMoreInfo']);
-  const preview = document.getElementById('exerciseImagePreview');
-  if(preview) preview.remove();
-  document.getElementById('addExerciseForm').style.display='none';
-  loadExercises();
+window.switchView = function(){
+  const val = document.getElementById('menuSelect').value;
+  document.getElementById('app').style.display = (val==='players')?'block':'none';
+  document.getElementById('adminArea').style.display = (val==='admin')?'block':'none';
+  document.getElementById('exercisesArea')?.remove(); // si ya estaba cargado, limpiar
+  if(val==='exercises') loadExercises();
 }
 
-function loadExercises(cat='all'){
-  const container = document.getElementById('exercisesContainer');
+// ---------------- EXERCISES ----------------
+function loadExercises(){
+  const container = document.createElement('div');
+  container.id='exercisesArea';
+  container.style.marginTop='10px';
+  document.querySelector('.container').appendChild(container);
+
   onValue(ref(db,'exercises'), snap=>{
     container.innerHTML='';
     snap.forEach(child=>{
       const ex = child.val();
       const id = child.key;
-      if(cat==='all' || ex.category === cat){
-        renderExerciseCard(id, ex, container);
-      }
+      renderExerciseCard(id, ex, container);
     });
   });
 }
 
-function renderExerciseCard(id, ex, container){
+window.renderExerciseCard = function(id, ex, container){
   const div = document.createElement('div');
   div.className='card';
   div.innerHTML=`
     <div class='info'>
       <input value='${ex.name}' onchange='updateExerciseField("${id}","name",this.value)' 
              style="font-weight:600; font-size:1.1em; width:100%; border:none; background:transparent;">
-      ${ex.imageUrl ? `<img src='${ex.imageUrl}' style='max-width:100%; margin:5px 0;'>` : ''}
+      <div style="margin:5px 0;">
+        <img id="exerciseImg_${id}" src='${ex.imageUrl||""}' style='max-width:100%; margin-bottom:5px; ${ex.imageUrl?"":"display:none;"}'>
+        <input type="file" id="exerciseFile_${id}">
+      </div>
       <div class='form-row'><small>Material:</small><input value='${ex.material || ""}' onchange='updateExerciseField("${id}","material",this.value)'></div>
       <div class='form-row'><small>Espacio:</small><input value='${ex.space || ""}' onchange='updateExerciseField("${id}","space",this.value)'></div>
       <div class='form-row'><small>Jugadores:</small><input value='${ex.players || ""}' onchange='updateExerciseField("${id}","players",this.value)'></div>
@@ -276,39 +254,45 @@ function renderExerciseCard(id, ex, container){
     </div>
   `;
   container.appendChild(div);
+
+  // Manejar cambio de imagen con preview + loader
+  const fileInput = document.getElementById(`exerciseFile_${id}`);
+  const imgEl = document.getElementById(`exerciseImg_${id}`);
+  fileInput.addEventListener('change', async function(){
+    const file = this.files[0];
+    if(!file) return;
+
+    // Preview instantáneo
+    const reader = new FileReader();
+    reader.onload = function(e){
+      imgEl.src = e.target.result;
+      imgEl.style.display = 'block';
+    }
+    reader.readAsDataURL(file);
+
+    // Loader
+    const loader = document.createElement('span');
+    loader.innerText = 'Subiendo... ⏳';
+    loader.style.display = 'block';
+    loader.style.fontSize = '0.9em';
+    loader.style.color = '#555';
+    fileInput.parentNode.insertBefore(loader, imgEl.nextSibling);
+
+    try {
+      const storageRef = sRef(storage, 'exercises/' + Date.now() + '_' + file.name);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      await set(ref(db,'exercises/'+id+'/imageUrl'), url);
+      imgEl.src = url; // reemplaza preview por URL real
+    } catch(err){
+      alert('Error al subir la imagen: ' + err.message);
+    } finally {
+      loader.remove();
+    }
+  });
 }
 
-window.updateExerciseField = function(id,field,value){ set(ref(db,'exercises/'+id+'/'+field),value); }
-window.deleteExercise = function(id){ if(confirm('¿Seguro?')) remove(ref(db,'exercises/'+id)); }
-window.filterExercises = function(cat){ loadExercises(cat); }
-
-// ---------------- MENU ----------------
-const menuSelect = document.getElementById('menuSelect');
-menuSelect.addEventListener('change', ()=>{
-  const val = menuSelect.value;
-  document.getElementById('app').style.display = (val==='players')?'block':'none';
-  document.getElementById('adminArea').style.display = (val==='admin')?'block':'none';
-  document.getElementById('exercisesArea').style.display = (val==='exercises')?'block':'none';
-  if(val==='exercises') loadExercises();
-});
-
-// ---------------- PREVIEW IMAGEN ----------------
-const exerciseImageInput = document.getElementById('exerciseImage');
-exerciseImageInput.addEventListener('change', function(){
-  let preview = document.getElementById('exerciseImagePreview');
-  if(!preview){
-    preview = document.createElement('img');
-    preview.id = 'exerciseImagePreview';
-    preview.style.maxWidth = '100%';
-    preview.style.margin = '10px 0';
-    exerciseImageInput.parentNode.insertBefore(preview, exerciseImageInput.nextSibling);
-  }
-  const file = this.files[0];
-  if(file){
-    const reader = new FileReader();
-    reader.onload = function(e){ preview.src = e.target.result; }
-    reader.readAsDataURL(file);
-  } else {
-    preview.src = '';
-  }
-});
+window.updateExerciseField = function(id, field, value){
+  set(ref(db,'exercises/'+id+'/'+field), value);
+}
+window.deleteExercise = function(id){ if(confirm('¿Seguro?')) remove(ref(db,'exercises/'+id]); }
