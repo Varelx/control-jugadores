@@ -79,7 +79,25 @@
     <div id="requestsList" style="margin-top:10px;"></div>
   </div>
 
+  <!-- Threads Section -->
+  <div id="threadsPage" style="display:none;" class="container">
+    <h2>Hilos / Anotaciones</h2>
+    <div id="threadsContainer"></div>
+    <button id="addThreadBtn" style="display:none;">➕ Añadir hilo</button>
+    <div id="addThreadForm" style="display:none;">
+      <input type="text" id="threadTitle" placeholder="Título del hilo">
+      <textarea id="threadContent" placeholder="Contenido del hilo"></textarea>
+      <button id="saveThreadBtn">Guardar hilo</button>
+    </div>
+  </div>
+
 </div>
+
+<!-- Bottom Menu -->
+<nav id="bottomMenu">
+  <button onclick="switchBottomView('players')">🏉 Jugadores</button>
+  <button onclick="switchBottomView('threads')">📝 Hilos</button>
+</nav>
 
 <script type="module" src="app.js"></script>
 </body>
