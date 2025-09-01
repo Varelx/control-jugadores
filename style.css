@@ -18,7 +18,7 @@ button { border:none; border-radius:8px; padding:8px 14px; background:#2e7d32; c
 button:hover { background:#1b5e20; }
 
 /* Inputs */
-input, select, textarea { width:100%; padding:10px; margin:6px 0; border:1px solid #dbdbdb; border-radius:6px; font-size:0.95em; }
+input, select { width:100%; padding:10px; margin:6px 0; border:1px solid #dbdbdb; border-radius:6px; font-size:0.95em; }
 
 /* AUTH BOX */
 #authBox { background:white; padding:20px; border-radius:12px; border:1px solid #dbdbdb; }
@@ -44,60 +44,4 @@ input, select, textarea { width:100%; padding:10px; margin:6px 0; border:1px sol
 /* Attendance buttons */
 .attendance-buttons { display:flex; gap:5px; margin:5px 0; }
 .attendance-buttons button { flex:1; background:#e0e0e0; color:#333; border:1px solid #ccc; }
-.attendance-buttons button.asistio { background:#2e7d32; color:white; }
-.attendance-buttons button.falto { background:#c62828; color:white; }
-
-/* Bottom menu */
-#bottomMenu {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background:white;
-  border-top:1px solid #ccc;
-  display:flex;
-  justify-content: space-around;
-  padding:8px 0;
-  z-index: 100;
-}
-#bottomMenu button {
-  flex:1;
-  text-align:center;
-  font-size:1.2em;
-  background:transparent;
-  color:#2e7d32;
-  font-weight:600;
-}
-#bottomMenu button.active {
-  color:white;
-  background:#2e7d32;
-  border-radius:12px;
-  padding:6px 0;
-}
-
-/* Threads / Accordion */
-.thread {
-  border:1px solid #ccc;
-  border-radius:10px;
-  margin-bottom:10px;
-  overflow:hidden;
-  background:white;
-}
-.thread-header {
-  padding:10px;
-  font-weight:600;
-  cursor:pointer;
-  background:#efefef;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.thread-content {
-  padding:10px;
-  display:none;
-  line-height:1.4;
-  font-size:0.95em;
-}
-.thread-header button {
-  display:none; /* Solo admins lo verán */
-}
+.attendance-buttons button.asistio { background
