@@ -83,27 +83,28 @@
   <!-- Ejercicios -->
   <div id="exercisesArea" style="display:none;">
     <h2>Ejercicios</h2>
-    <div class="tabs">
-      <button class="exerciseFilter" onclick="filterExercise('all')">Todas</button>
-      <button class="exerciseFilter" onclick="filterExercise('1')">1</button>
-      <button class="exerciseFilter" onclick="filterExercise('2')">2</button>
-      <button class="exerciseFilter" onclick="filterExercise('3')">3</button>
-    </div>
 
     <button id="toggleExerciseFormBtn">➕ Añadir ejercicio</button>
-    <div id="addExerciseForm" style="display:none; margin:10px 0;">
-      <input type="text" id="exerciseName" placeholder="Nombre del ejercicio">
-      <input type="file" id="exerciseImageInput">
-      <input type="text" id="exerciseMaterial" placeholder="Material">
-      <input type="text" id="exerciseSpace" placeholder="Espacio">
-      <input type="text" id="exercisePlayers" placeholder="Jugadores">
-      <input type="text" id="exerciseMoreInfo" placeholder="Más info">
+    <div id="addExerciseForm" style="display:none;">
+      <input type="text" id="exerciseTitle" placeholder="Título">
       <select id="exerciseCategory">
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
       </select>
+      <input type="text" id="exerciseMaterial" placeholder="Material">
+      <input type="text" id="exerciseSpace" placeholder="Espacio">
+      <input type="text" id="exercisePlayers" placeholder="Jugadores">
+      <input type="text" id="exerciseMoreInfo" placeholder="Más info">
+      <input type="file" id="exerciseImage" accept="image/*">
       <button id="saveExerciseBtn">Guardar ejercicio</button>
+    </div>
+
+    <div id="exerciseFilters">
+      <button class="exerciseFilter active" onclick="filterExercise('all')">All</button>
+      <button class="exerciseFilter" onclick="filterExercise('1')">1</button>
+      <button class="exerciseFilter" onclick="filterExercise('2')">2</button>
+      <button class="exerciseFilter" onclick="filterExercise('3')">3</button>
     </div>
 
     <div id="exercisesContainer"></div>
