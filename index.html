@@ -80,6 +80,35 @@
     <div id="requestsList" style="margin-top:10px;"></div>
   </div>
 
+  <!-- Ejercicios -->
+  <div id="exercisesArea" style="display:none;">
+    <h2>Ejercicios</h2>
+    <div class="tabs">
+      <button class="exerciseFilter" onclick="filterExercise('all')">Todas</button>
+      <button class="exerciseFilter" onclick="filterExercise('1')">1</button>
+      <button class="exerciseFilter" onclick="filterExercise('2')">2</button>
+      <button class="exerciseFilter" onclick="filterExercise('3')">3</button>
+    </div>
+
+    <button id="toggleExerciseFormBtn">➕ Añadir ejercicio</button>
+    <div id="addExerciseForm" style="display:none; margin:10px 0;">
+      <input type="text" id="exerciseName" placeholder="Nombre del ejercicio">
+      <input type="file" id="exerciseImageInput">
+      <input type="text" id="exerciseMaterial" placeholder="Material">
+      <input type="text" id="exerciseSpace" placeholder="Espacio">
+      <input type="text" id="exercisePlayers" placeholder="Jugadores">
+      <input type="text" id="exerciseMoreInfo" placeholder="Más info">
+      <select id="exerciseCategory">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+      <button id="saveExerciseBtn">Guardar ejercicio</button>
+    </div>
+
+    <div id="exercisesContainer"></div>
+  </div>
+
 </div>
 
 <script type="module" src="app.js"></script>
