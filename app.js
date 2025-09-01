@@ -28,7 +28,7 @@ document.getElementById('registerBtn').addEventListener('click', () => {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   createUserWithEmailAndPassword(auth, email, password)
-    .then(user => set(ref(db,'users/'+user.user.uid), {email, status:'pendiente'}))
+    .then(user => set(ref(db,'users/'+user.user.uid), {email, status:'pendiente', role:'user'}))
     .then(()=> showMsg('Registrado, pendiente de aprobación'))
     .catch(e => showMsg(e.message,'error'));
 });
@@ -41,25 +41,25 @@ document.getElementById('loginBtn').addEventListener('click', () => {
 });
 
 onAuthStateChanged(auth, user => {
-  if (user) {
-    get(ref(db,'users/'+user.uid)).then(snap => {
+  if(user){
+    get(ref(db,'users/'+user.uid)).then(snap=>{
       const data = snap.val();
-      if (data && data.status === 'aprobado') {
-        document.getElementById('authBox').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        if (data.role==='admin') {
-          document.getElementById('menuContainer').style.display='block';
-        }
-        loadPlayers();
-        console.log(onValue); 
-        loadExercises(); // <-- aquí debe estar, después de definir db y onValue
+      if(!data || data.status !== 'aprobado'){
+        showMsg('Usuario pendiente de aprobación','error');
+        return;
       }
+      document.getElementById('authBox').style.display='none';
+      document.getElementById('app').style.display='block';
+      if(data.role==='admin'){
+        document.getElementById('menuContainer').style.display='block';
+      }
+      loadPlayers();
+      loadExercises();
     });
   } else {
     document.getElementById('menuContainer').style.display='none';
   }
 });
-
 
 function showMsg(msg,type='info'){
   authMsg.innerText = msg;
@@ -96,25 +96,28 @@ document.getElementById('toggleFormBtn').addEventListener('click', ()=>{
   form.style.display = (form.style.display==='none'||form.style.display==='')?'block':'none';
 });
 document.getElementById('savePlayerBtn').addEventListener('click', addPlayer);
+
 function addPlayer(){
   const name = document.getElementById('playerName').value;
   const birth = document.getElementById('playerBirth').value;
   const category = document.getElementById('categorySelect').value;
-  if(!name){ alert('Nombre requerido'); return; }
-  if(!birth){ alert('Fecha de nacimiento requerida'); return; }
+  if(!name || !birth){ alert('Nombre y fecha requeridos'); return; }
   const refPlayer = push(ref(db,'players'));
   set(refPlayer, {
-    name, birth, category,
+    name,
+    birth,
+    category,
     dni: document.getElementById('playerDni').value,
     address: document.getElementById('playerAddress').value,
     phone: document.getElementById('playerPhone').value,
     license: document.getElementById('playerLicense').value,
     moreInfo: document.getElementById('playerMoreInfo').value,
     attendance:{}
-  });
+  }).then(()=> loadPlayers());
   ['playerName','playerBirth','categorySelect','playerDni','playerAddress','playerPhone','playerLicense','playerMoreInfo'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('addPlayerForm').style.display='none';
 }
+
 function loadPlayers(){
   const container = document.getElementById('playersContainer');
   onValue(ref(db,'players'), snap=>{
@@ -125,6 +128,7 @@ function loadPlayers(){
     });
   });
 }
+
 function renderPlayerCard(id, p, container){
   const div = document.createElement('div');
   div.className='card';
@@ -151,6 +155,7 @@ function renderPlayerCard(id, p, container){
   container.appendChild(div);
   renderAttendanceTable(id,p.attendance); updateAttendanceButtons(id,p.attendance);
 }
+
 window.markAttendance = function(id,presente){
   const today = new Date().toISOString().slice(0,10);
   set(ref(db,'players/'+id+'/attendance/'+today),presente).then(()=>{
@@ -158,6 +163,7 @@ window.markAttendance = function(id,presente){
     updateAttendanceButtons(id, { [today]: presente });
   });
 }
+
 window.renderAttendanceTable = function(id, attendance){
   const table = document.getElementById('attendance_'+id);
   table.innerHTML='<tr><th>Fecha</th><th>Asistencia</th></tr>';
@@ -167,6 +173,7 @@ window.renderAttendanceTable = function(id, attendance){
     table.appendChild(tr);
   }
 }
+
 function updateAttendanceButtons(id, attendance){
   const today = new Date().toISOString().slice(0,10);
   const asistBtn = document.getElementById('asist_'+id);
@@ -177,10 +184,12 @@ function updateAttendanceButtons(id, attendance){
     else faltaBtn.classList.add('falto');
   }
 }
+
 window.toggleDetails = function(id){
   const el = document.getElementById('details_'+id);
   el.style.display = (el.style.display==='none'||el.style.display==='')?'block':'none';
 }
+
 window.updateField = function(id,field,value){ set(ref(db,'players/'+id+'/'+field),value); }
 window.deletePlayer = function(id){ if(confirm('¿Seguro?')) remove(ref(db,'players/'+id)); }
 window.filterCategory = function(cat){
@@ -207,23 +216,17 @@ function addExercise(){
   const moreInfo = document.getElementById('exerciseMoreInfo').value;
   const file = document.getElementById('exerciseImage').files[0];
 
-  if(!title){ alert('Título requerido'); return; }
-
   const reader = new FileReader();
   reader.onload = function(e){
-    const image = e.target.result;
+    const image = e.target.result || '';
     const refEx = push(ref(db,'exercises'));
-    set(refEx,{title, category, material, space, players, moreInfo, image});
+    set(refEx,{title, category, material, space, players, moreInfo, image}).then(()=> loadExercises());
     ['exerciseTitle','exerciseMaterial','exerciseSpace','exercisePlayers','exerciseMoreInfo','exerciseImage'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('addExerciseForm').style.display='none';
   }
+
   if(file) reader.readAsDataURL(file);
-  else{
-    const refEx = push(ref(db,'exercises'));
-    set(refEx,{title, category, material, space, players, moreInfo, image:''});
-    ['exerciseTitle','exerciseMaterial','exerciseSpace','exercisePlayers','exerciseMoreInfo','exerciseImage'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('addExerciseForm').style.display='none';
-  }
+  else reader.onload(); // dispara la función reader.onload sin archivo
 }
 
 function loadExercises(){
