@@ -2,6 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, set, push, onValue, get, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC-DTX0x8Bebk6Z1TEkyyVD3K4jOPVSmLA",
@@ -17,6 +18,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
+const storage = getStorage(app);
 let currentCategory = 'all';
 
 // ---------------- AUTH ----------------
@@ -45,11 +47,9 @@ onAuthStateChanged(auth,user=>{
       if(data && data.status==='aprobado'){
         document.getElementById('authBox').style.display='none';
         document.getElementById('app').style.display='block';
-
         if(data.role==='admin'){
           document.getElementById('menuContainer').style.display='block';
         }
-
         loadPlayers();
       }
     });
@@ -67,13 +67,11 @@ function showMsg(msg,type='info'){
 document.getElementById('adminBtn').addEventListener('click', () => {
   const user = auth.currentUser;
   if(!user) return alert('No has iniciado sesión');
-
   get(ref(db,'users/' + user.uid)).then(snap=>{
     const data = snap.val();
     if(!data || data.role !== 'admin'){
       return alert('No tienes permisos de administrador');
     }
-
     const list = document.getElementById('requestsList');
     list.innerHTML='';
     get(ref(db,'users')).then(snap=>{
@@ -213,8 +211,104 @@ window.filterCategory = function(cat){
   loadPlayers();
 }
 
-window.switchView = function(){
-  const val = document.getElementById('menuSelect').value;
+// ---------------- EJERCICIOS ----------------
+document.getElementById('toggleExerciseFormBtn').addEventListener('click', ()=>{
+  const form = document.getElementById('addExerciseForm');
+  form.style.display = (form.style.display==='none'||form.style.display==='')?'block':'none';
+});
+
+document.getElementById('saveExerciseBtn').addEventListener('click', addExercise);
+
+async function addExercise(){
+  const name = document.getElementById('exerciseName').value;
+  const file = document.getElementById('exerciseImage').files[0];
+  const material = document.getElementById('exerciseMaterial').value;
+  const space = document.getElementById('exerciseSpace').value;
+  const players = document.getElementById('exercisePlayers').value;
+  const moreInfo = document.getElementById('exerciseMoreInfo').value;
+  const category = document.getElementById('exerciseCategorySelect').value;
+
+  if(!name){ alert('Nombre requerido'); return; }
+
+  let imageUrl = '';
+  if(file){
+    const storageRef = sRef(storage, 'exercises/' + Date.now() + '_' + file.name);
+    await uploadBytes(storageRef, file);
+    imageUrl = await getDownloadURL(storageRef);
+  }
+
+  const exerciseRef = push(ref(db,'exercises'));
+  set(exerciseRef, {name, imageUrl, material, space, players, moreInfo, category});
+  clearForm(['exerciseName','exerciseImage','exerciseMaterial','exerciseSpace','exercisePlayers','exerciseMoreInfo']);
+  const preview = document.getElementById('exerciseImagePreview');
+  if(preview) preview.remove();
+  document.getElementById('addExerciseForm').style.display='none';
+  loadExercises();
+}
+
+function loadExercises(cat='all'){
+  const container = document.getElementById('exercisesContainer');
+  onValue(ref(db,'exercises'), snap=>{
+    container.innerHTML='';
+    snap.forEach(child=>{
+      const ex = child.val();
+      const id = child.key;
+      if(cat==='all' || ex.category === cat){
+        renderExerciseCard(id, ex, container);
+      }
+    });
+  });
+}
+
+function renderExerciseCard(id, ex, container){
+  const div = document.createElement('div');
+  div.className='card';
+  div.innerHTML=`
+    <div class='info'>
+      <input value='${ex.name}' onchange='updateExerciseField("${id}","name",this.value)' 
+             style="font-weight:600; font-size:1.1em; width:100%; border:none; background:transparent;">
+      ${ex.imageUrl ? `<img src='${ex.imageUrl}' style='max-width:100%; margin:5px 0;'>` : ''}
+      <div class='form-row'><small>Material:</small><input value='${ex.material || ""}' onchange='updateExerciseField("${id}","material",this.value)'></div>
+      <div class='form-row'><small>Espacio:</small><input value='${ex.space || ""}' onchange='updateExerciseField("${id}","space",this.value)'></div>
+      <div class='form-row'><small>Jugadores:</small><input value='${ex.players || ""}' onchange='updateExerciseField("${id}","players",this.value)'></div>
+      <div class='form-row'><small>Más info:</small><input value='${ex.moreInfo || ""}' onchange='updateExerciseField("${id}","moreInfo",this.value)'></div>
+      <button onclick='deleteExercise("${id}")'>🗑️ Borrar ejercicio</button>
+    </div>
+  `;
+  container.appendChild(div);
+}
+
+window.updateExerciseField = function(id,field,value){ set(ref(db,'exercises/'+id+'/'+field),value); }
+window.deleteExercise = function(id){ if(confirm('¿Seguro?')) remove(ref(db,'exercises/'+id)); }
+window.filterExercises = function(cat){ loadExercises(cat); }
+
+// ---------------- MENU ----------------
+const menuSelect = document.getElementById('menuSelect');
+menuSelect.addEventListener('change', ()=>{
+  const val = menuSelect.value;
   document.getElementById('app').style.display = (val==='players')?'block':'none';
   document.getElementById('adminArea').style.display = (val==='admin')?'block':'none';
-}
+  document.getElementById('exercisesArea').style.display = (val==='exercises')?'block':'none';
+  if(val==='exercises') loadExercises();
+});
+
+// ---------------- PREVIEW IMAGEN ----------------
+const exerciseImageInput = document.getElementById('exerciseImage');
+exerciseImageInput.addEventListener('change', function(){
+  let preview = document.getElementById('exerciseImagePreview');
+  if(!preview){
+    preview = document.createElement('img');
+    preview.id = 'exerciseImagePreview';
+    preview.style.maxWidth = '100%';
+    preview.style.margin = '10px 0';
+    exerciseImageInput.parentNode.insertBefore(preview, exerciseImageInput.nextSibling);
+  }
+  const file = this.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload = function(e){ preview.src = e.target.result; }
+    reader.readAsDataURL(file);
+  } else {
+    preview.src = '';
+  }
+});
