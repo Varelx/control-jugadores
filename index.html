@@ -16,6 +16,7 @@
     <select id="menuSelect" onchange="switchView()">
       <option value="players">Jugadores</option>
       <option value="exercises">Ejercicios</option>
+      <!-- Área Administración se añade solo para admin -->
     </select>
   </div>
 </header>
@@ -32,7 +33,7 @@
     <p id="authMsg"></p>
   </div>
 
-  <!-- APP -->
+  <!-- APP Jugadores -->
   <div id="app" style="display:none;">
     <div class="tabs">
       <button class="tabBtn" onclick="filterCategory('all')">Todas</button>
@@ -55,7 +56,6 @@
       <input type="tel" id="playerPhone" placeholder="Teléfono">
       <input type="text" id="playerLicense" placeholder="Nº Licencia">
       <input type="text" id="playerMoreInfo" placeholder="Más info">
-
       <select id="categorySelect">
         <option value="M8">M8</option>
         <option value="M10">M10</option>
@@ -72,38 +72,32 @@
     <div id="playersContainer"></div>
   </div>
 
+  <!-- APP Ejercicios -->
+  <div id="exercisesArea" style="display:none;">
+    <h2>Ejercicios</h2>
+    <button id="toggleExerciseFormBtn">➕ Añadir ejercicio</button>
+    <div id="addExerciseForm" style="display:none;">
+      <input type="text" id="exerciseName" placeholder="Nombre del ejercicio">
+      <input type="text" id="exerciseMaterial" placeholder="Material">
+      <input type="text" id="exerciseSpace" placeholder="Espacio">
+      <input type="text" id="exercisePlayers" placeholder="Jugadores">
+      <input type="text" id="exerciseMoreInfo" placeholder="Más info">
+      <input type="file" id="exerciseImage">
+      <select id="exerciseFilter">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+      <button id="saveExerciseBtn">Guardar ejercicio</button>
+    </div>
+    <div id="exercisesContainer"></div>
+  </div>
+
   <!-- Área Admin -->
   <div id="adminArea" style="display:none;">
     <h2>Área de Administración</h2>
     <button id="adminBtn">Mostrar solicitudes pendientes</button>
     <div id="requestsList" style="margin-top:10px;"></div>
-  </div>
-
-  <!-- Ejercicios -->
-  <div id="exercisesArea" style="display:none;">
-    <h2>Ejercicios</h2>
-    <div class="tabs">
-      <button onclick="filterExerciseCategory('all')">Todas</button>
-      <button onclick="filterExerciseCategory('1')">1</button>
-      <button onclick="filterExerciseCategory('2')">2</button>
-      <button onclick="filterExerciseCategory('3')">3</button>
-    </div>
-    <button id="toggleExerciseFormBtn">➕ Añadir ejercicio</button>
-    <div id="addExerciseForm" style="display:none;">
-      <input type="text" id="exerciseName" placeholder="Nombre del ejercicio">
-      <select id="exerciseCategory">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-      </select>
-      <input type="text" id="exerciseMaterial" placeholder="Material">
-      <input type="text" id="exerciseSpace" placeholder="Espacio">
-      <input type="text" id="exercisePlayers" placeholder="Jugadores">
-      <input type="text" id="exerciseMoreInfo" placeholder="Más info">
-      <input type="file" id="exerciseImage" accept="image/*">
-      <button id="saveExerciseBtn">Guardar ejercicio</button>
-    </div>
-    <div id="exercisesContainer"></div>
   </div>
 
 </div>
