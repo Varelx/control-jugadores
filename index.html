@@ -82,42 +82,34 @@
     <div id="requestsList" style="margin-top:10px;"></div>
   </div>
 
-  <!-- APP -->
+  <!-- Ejercicios -->
   <div id="exercisesArea" style="display:none;">
-
-    <!-- Jugadores -->
-    <div class="tabs">
-      <button class="tabBtn" onclick="filterCategory('all')">Todas</button>
-      <button class="tabBtn" onclick="filterCategory('1')">1</button>
-      <button class="tabBtn" onclick="filterCategory('2')">2</button>
-      <button class="tabBtn" onclick="filterCategory('3')">3</button>
-      <button class="tabBtn" onclick="filterCategory('4')">4</button>
-      <button class="tabBtn" onclick="filterCategory('5')">5</button>
-      <button class="tabBtn" onclick="filterCategory('6')">6</button>
+    <h2>Ejercicios</h2>
+    <div class="exercise-filters">
+      <button class="exerciseFilter" onclick="filterExercise('all')">Todas</button>
+      <button class="exerciseFilter" onclick="filterExercise('1')">1</button>
+      <button class="exerciseFilter" onclick="filterExercise('2')">2</button>
+      <button class="exerciseFilter" onclick="filterExercise('3')">3</button>
     </div>
-
-    <button id="toggleFormBtn">➕ Añadir ejercicio</button>
+    <button id="toggleExerciseFormBtn">➕ Añadir ejercicio</button>
     <div id="addExerciseForm" style="display:none;">
-      <input type="text" id="exerciseName" placeholder="Nombre">
-      <input type="text" id="exerciseDni" placeholder="DNI">
-      <input type="text" id="exerciseAddress" placeholder="Dirección">
-      <input type="tel" id="exercisePhone" placeholder="Teléfono">
-      <input type="text" id="exerciseLicense" placeholder="Nº Licencia">
-      <input type="text" id="exerciseMoreInfo" placeholder="Más info">
-      <select id="categorySelect">
+      <input type="text" id="exerciseTitle" placeholder="Título">
+      <select id="exerciseCategory">
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
       </select>
+      <input type="text" id="exerciseMaterial" placeholder="Material">
+      <input type="text" id="exerciseSpace" placeholder="Espacio">
+      <input type="text" id="exercisePlayers" placeholder="Jugadores">
+      <input type="text" id="exerciseMoreInfo" placeholder="Más info">
+      <input type="file" id="exerciseImage" accept="image/*">
       <button id="saveExerciseBtn">Guardar ejercicio</button>
     </div>
-
     <div id="exercisesContainer"></div>
-
   </div>
+
+</div>
 
 <script type="module" src="app.js"></script>
 </body>
