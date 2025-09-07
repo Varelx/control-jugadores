@@ -48,7 +48,7 @@ onAuthStateChanged(auth,user=>{
         document.getElementById('app').style.display='block';
 
         if(data.role==='admin'){
-          document.getElementById('menuContainer').style.display='block';
+          document.getElementById('Container').style.display='block';
         }
 
         loadPlayers();
@@ -312,9 +312,18 @@ window.filterExerciseCategory = function(cat){
 }
 
 // ---------------- SWITCH VIEW ----------------
-window.switchView = function(){
-  const val=document.getElementById('menuSelect').value;
-  document.getElementById('app').style.display=(val==='players')?'block':'none';
-  document.getElementById('adminArea').style.display=(val==='admin')?'block':'none';
-  document.getElementById('exercisesArea').style.display=(val==='exercises')?'block':'none';
-}
+window.switchView = function() {
+  const val = document.getElementById('menuSelect').value;
+
+  // Mostrar sección Jugadores
+  document.getElementById('app').style.display = (val === 'players') ? 'block' : 'none';
+
+  // Mostrar sección Ejercicios
+  document.getElementById('exercisesArea').style.display = (val === 'exercises') ? 'block' : 'none';
+
+  // Mostrar Área de Administración
+  document.getElementById('adminArea').style.display = (val === 'admin') ? 'block' : 'none';
+
+  // Opcional: si quieres cargar los ejercicios automáticamente
+  if(val === 'exercises') loadExercises();
+};
