@@ -41,6 +41,12 @@ input, select { width: 100%; padding: 10px; margin: 6px 0; border: 1px solid #db
 .player-details .form-row small { width: 120px; font-size: 0.85em; color: #555; flex-shrink: 0; }
 .player-details .form-row input { flex: 1; font-size: 0.95em; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
 
+/* Player Details */
+.exercise-details { display: none; margin-top: 12px; border-top: 1px solid #eee; padding-top: 12px; font-size: 0.95em; line-height: 1.4; color: #333; }
+.exercise-details .form-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 6px; }
+.exercise-details .form-row small { width: 120px; font-size: 0.85em; color: #555; flex-shrink: 0; }
+.exercise-details .form-row input { flex: 1; font-size: 0.95em; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
+
 /* Attendance Buttons */
 .attendance-buttons { display: flex; gap: 5px; margin: 5px 0; }
 .attendance-buttons button { flex: 1; background: #e0e0e0; color: #333; border: 1px solid #ccc; }
