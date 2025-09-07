@@ -46,9 +46,3 @@ input, select { width: 100%; padding: 10px; margin: 6px 0; border: 1px solid #db
 .attendance-buttons button { flex: 1; background: #e0e0e0; color: #333; border: 1px solid #ccc; }
 .attendance-buttons button.asistio { background: #2e7d32; color: white; }
 .attendance-buttons button.falto { background: red; color: white; }
-
-/* Exercises Details */
-.exercises-details { display: none; margin-top: 12px; border-top: 1px solid #eee; padding-top: 12px; font-size: 0.95em; line-height: 1.4; color: #333; }
-.exercises-details .form-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 6px; }
-.exercises-details .form-row small { width: 120px; font-size: 0.85em; color: #555; flex-shrink: 0; }
-.exercises-details .form-row input { flex: 1; font-size: 0.95em; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
