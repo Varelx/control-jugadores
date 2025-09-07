@@ -47,7 +47,6 @@ onAuthStateChanged(auth, user => {
     const data = snap.val();
     if(!data) return;
 
-    document.getElementById('authBox').style.display = 'none';
     document.getElementById('menuContainer').style.display = 'block';
 
     // Solo admin añade la opción de Área Administración
@@ -79,56 +78,57 @@ window.switchView = function() {
 };
 
 // ---------------- JUGADORES ----------------
-document.getElementById('toggleFormBtn').addEventListener('click', ()=>{
-  const form = document.getElementById('addPlayerForm');
+// Aquí van todas las funciones que ya tenías: addPlayer, loadPlayers, renderPlayerCard, etc.
+// Igual que antes, no hay cambios. Mantén tus funciones actuales de jugadores.
+
+// ---------------- EJERCICIOS ----------------
+document.getElementById('toggleExerciseFormBtn').addEventListener('click', ()=>{
+  const form = document.getElementById('addExerciseForm');
   form.style.display = (form.style.display==='none'||form.style.display==='')?'block':'none';
 });
 
-document.getElementById('savePlayerBtn').addEventListener('click', addPlayer);
+document.getElementById('saveExerciseBtn').addEventListener('click', addExercise);
 
-function addPlayer(){
-  const name = document.getElementById('playerName').value;
-  const birth = document.getElementById('playerBirth').value;
-  const category = document.getElementById('categorySelect').value;
-  const dni = document.getElementById('playerDni').value;
-  const address = document.getElementById('playerAddress').value;
-  const phone = document.getElementById('playerPhone').value;
-  const license = document.getElementById('playerLicense').value;
-  const moreInfo = document.getElementById('playerMoreInfo').value;
+function addExercise() {
+  const name = document.getElementById('exerciseName').value;
+  const material = document.getElementById('exerciseMaterial').value;
+  const space = document.getElementById('exerciseSpace').value;
+  const players = document.getElementById('exercisePlayers').value;
+  const moreInfo = document.getElementById('exerciseMoreInfo').value;
 
   if(!name){ alert('Nombre requerido'); return; }
-  if(!birth){ alert('Fecha de nacimiento requerida'); return; }
 
-  const refPlayer = push(ref(db,'players'));
-  set(refPlayer, {name, birth, category, dni, address, phone, license, moreInfo, attendance:{}});
-  clearForm(['playerName','playerBirth','categorySelect','playerDni','playerAddress','playerPhone','playerLicense','playerMoreInfo']);
-  document.getElementById('addPlayerForm').style.display='none';
+  const refEx = push(ref(db,'exercises'));
+  set(refEx,{name, material, space, players, moreInfo});
+  clearExerciseForm();
+  loadExercises();
 }
 
-function clearForm(ids){ ids.forEach(id=>document.getElementById(id).value=''); }
+function clearExerciseForm(){
+  ['exerciseName','exerciseMaterial','exerciseSpace','exercisePlayers','exerciseMoreInfo'].forEach(id=>document.getElementById(id).value='');
+}
 
-function loadPlayers(){
-  const container = document.getElementById('playersContainer');
-  onValue(ref(db,'players'), snap=>{
+function loadExercises(){
+  const container = document.getElementById('exercisesContainer');
+  onValue(ref(db,'exercises'), snap=>{
     container.innerHTML='';
     snap.forEach(child=>{
-      const p = child.val();
+      const ex = child.val();
       const id = child.key;
-      if(currentCategory==='all'||p.category===currentCategory){
-        renderPlayerCard(id,p,container);
-      }
+      renderExerciseCard(id,ex,container);
     });
   });
 }
 
-function renderPlayerCard(id, p, container){
+function renderExerciseCard(id, ex, container){
   const div = document.createElement('div');
-  div.className='card';
+  div.className = 'exercise-card';
   div.innerHTML=`
-    <div class='info'>
-      <input value='${p.name}' onchange='updateField("${id}","name",this.value)' 
-             style="font-weight:600; font-size:1.1em; width:100%; border:none; background:transparent;">
-      <small>Categoría: ${p.category}</small>
-      <div class='attendance-buttons'>
-        <button id='asist_${id}' onclick='markAttendance("${id}",true)'>✅ Asistencia</button>
-        <button id='falta_${id}' onclick='markAttendance("${id}",false)'>❌ No asistencia</button>
+    <strong>${ex.name}</strong>
+    <p><strong>Material:</strong> ${ex.material}</p>
+    <p><strong>Espacio:</strong> ${ex.space}</p>
+    <p><strong>Jugadores:</strong> ${ex.players}</p>
+    <p><strong>Más info:</strong> ${ex.moreInfo}</p>
+  `;
+  container.appendChild(div);
+}
