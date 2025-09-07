@@ -1,81 +1,52 @@
 /* Global */
-* { box-sizing: border-box; }
-body { font-family: 'Quicksand', sans-serif; background: #fafafa; margin: 0; padding: 0; }
+* { box-sizing:border-box; }
+body { font-family:'Quicksand', sans-serif; background:#fafafa; margin:0; padding:0; }
 
 /* Header */
-header { 
-  position: sticky; top: 0; z-index: 100; 
-  background: #2e7d32; border-bottom: 1px solid #1b5e20; 
-  display: flex; align-items: center; justify-content: space-between; 
-  padding: 8px 14px; 
-}
-header img { height: 40px; }
-header h1 { font-size: clamp(1em, 2vw, 1.3em); margin: 0; color: white; font-weight: 600; }
+header { position:sticky; top:0; z-index:100; background:#2e7d32; border-bottom:1px solid #1b5e20; display:flex; align-items:center; justify-content:space-between; padding:8px 14px; }
+header img { height:40px; }
+header h1 { font-size:clamp(1em,2vw,1.3em); margin:0; color:white; font-weight:600; }
 
 /* Menu Select */
-#menuContainer select { padding: 6px 10px; border-radius: 6px; border: none; font-weight: 600; }
+#menuContainer select { padding:6px 10px; border-radius:6px; border:none; font-weight:600; }
 
 /* Container */
-.container { max-width: 600px; margin: 20px auto; padding: 0 10px; }
+.container { max-width:600px; margin:20px auto; padding:0 10px; }
 
 /* Buttons */
-button { 
-  border: none; border-radius: 8px; padding: 8px 14px; 
-  background: #2e7d32; color: white; font-weight: 600; 
-  cursor: pointer; transition: 0.2s; 
-}
-button:hover { background: #1b5e20; }
+button { border:none; border-radius:8px; padding:8px 14px; background:#2e7d32; color:white; font-weight:600; cursor:pointer; transition:0.2s; }
+button:hover { background:#1b5e20; }
 
 /* Inputs */
-input, select { 
-  width: 100%; padding: 10px; margin: 6px 0; 
-  border: 1px solid #dbdbdb; border-radius: 6px; font-size: 0.95em; 
-}
+input, select { width:100%; padding:10px; margin:6px 0; border:1px solid #dbdbdb; border-radius:6px; font-size:0.95em; }
 
 /* AUTH BOX */
-#authBox { background: white; padding: 20px; border-radius: 12px; border: 1px solid #dbdbdb; }
-#authBox h2 { margin-top: 0; text-align: center; color: #2e7d32; }
-#authMsg { text-align: center; font-weight: 600; margin-top: 10px; }
+#authBox { background:white; padding:20px; border-radius:12px; border:1px solid #dbdbdb; }
+#authBox h2 { margin-top:0; text-align:center; color:#2e7d32; }
+#authMsg { text-align:center; font-weight:600; margin-top:10px; }
 
-/* Tabs jugadores */
-.tabs { display: flex; gap: 5px; margin: 10px 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-.tabs button { flex: 0 0 auto; padding: 8px 12px; white-space: nowrap; background: #efefef; color: #262626; border-radius: 6px; font-size: 0.95em; }
-.tabs button.active { background: #2e7d32; color: white; }
+/* Tabs */
+.tabs { display:flex; gap:5px; margin:10px 0; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.tabs button { flex:0 0 auto; padding:8px 12px; white-space:nowrap; background:#efefef; color:#262626; border-radius:6px; font-size:0.95em; }
+.tabs button.active { background:#2e7d32; color:white; }
 
-/* Tarjetas (jugadores y ejercicios) */
-.card { 
-  background: white; border: 1px solid #dbdbdb; border-radius: 12px; 
-  margin-bottom: 20px; padding: 15px; 
-}
-.card strong { font-size: 1.1em; }
-.card .info { display: flex; flex-direction: column; gap: 4px; }
+/* Cards */
+.card { background:white; border:1px solid #dbdbdb; border-radius:12px; margin-bottom:20px; padding:15px; }
+.card strong { font-size:1.1em; }
+.card .info { display:flex; flex-direction:column; gap:4px; }
 
 /* Player Details */
-.player-details { 
-  display: none; margin-top: 12px; border-top: 1px solid #eee; 
-  padding-top: 12px; font-size: 0.95em; line-height: 1.4; color: #333; 
-}
-.player-details .form-row { 
-  display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 6px; 
-}
-.player-details .form-row small { width: 120px; font-size: 0.85em; color: #555; flex-shrink: 0; }
-.player-details .form-row input { flex: 1; font-size: 0.95em; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
+.player-details { display:none; margin-top:12px; border-top:1px solid #eee; padding-top:12px; font-size:0.95em; line-height:1.4; color:#333; }
+.player-details .form-row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:6px; }
+.player-details .form-row small { width:120px; font-size:0.85em; color:#555; flex-shrink:0; }
+.player-details .form-row input { flex:1; font-size:0.95em; padding:6px 8px; border:1px solid #ccc; border-radius:6px; }
 
 /* Attendance buttons */
-.attendance-buttons { display: flex; gap: 5px; margin: 5px 0; }
-.attendance-buttons button { flex: 1; background: #e0e0e0; color: #333; border: 1px solid #ccc; }
-.attendance-buttons button.asistio { background: #2e7d32; color: white; }
-.attendance-buttons button.falto { background: #c62828; color: white; }
+.attendance-buttons { display:flex; gap:5px; margin:5px 0; }
+.attendance-buttons button { flex:1; background:#e0e0e0; color:#333; border:1px solid #ccc; }
+.attendance-buttons button.asistio { background:#2e7d32; color:white; }
+.attendance-buttons button.falto { background:#d32f2f; color:white; }
 
 /* Ejercicios */
-#exercisesArea h2 { color: #2e7d32; margin-bottom: 10px; }
-.exercise-filters { display: flex; gap: 5px; margin: 10px 0; }
-.exercise-filters button { flex: 1; background: #efefef; color: #333; }
-.exercise-filters button.active { background: #2e7d32; color: white; }
-
-/* Card ejercicio */
-.exercise-card img { 
-  width: 100%; max-height: 180px; object-fit: cover; 
-  border-radius: 8px; margin-bottom: 10px; 
-}
-.exercise-card .info p { margin: 4px 0; font-size: 0.9em; color: #444; }
+.exercise-card { background:white; border:1px solid #dbdbdb; border-radius:12px; margin-bottom:20px; padding:15px; display:flex; flex-direction:column; gap:8px; }
+.exercise-card img { max-width:100%; border-radius:8px; }
