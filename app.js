@@ -5,13 +5,14 @@ import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/fi
 
 // TODO: Cambia esto por tu config de Firebase
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "APP_ID"
+  apiKey: "AIzaSyC-DTX0x8Bebk6Z1TEkyyVD3K4jOPVSmLA",
+  authDomain: "control-jugadores-64ae6.firebaseapp.com",
+  databaseURL: "https://control-jugadores-64ae6-default-rtdb.firebaseio.com",
+  projectId: "control-jugadores-64ae6",
+  storageBucket: "control-jugadores-64ae6.firebasestorage.app",
+  messagingSenderId: "345003884874",
+  appId: "1:345003884874:web:51308a576a636b5a9741b3",
+  measurementId: "G-1RR2CLEPL1"
 };
 
 const app = initializeApp(firebaseConfig);
