@@ -31,8 +31,8 @@ input, select { width:100%; padding:10px; margin:6px 0; border:1px solid #dbdbdb
 .tabs button.active { background:#2e7d32; color:white; }
 
 /* Cards */
-.card { background:white; border:1px solid #dbdbdb; border-radius:12px; margin-bottom:20px; padding:15px; }
-.card strong { font-size:1.1em; }
+.card, .exercise-card { background:white; border:1px solid #dbdbdb; border-radius:12px; margin-bottom:20px; padding:15px; }
+.card strong, .exercise-card strong { font-size:1.1em; }
 .card .info { display:flex; flex-direction:column; gap:4px; }
 
 /* Player Details */
@@ -45,8 +45,4 @@ input, select { width:100%; padding:10px; margin:6px 0; border:1px solid #dbdbdb
 .attendance-buttons { display:flex; gap:5px; margin:5px 0; }
 .attendance-buttons button { flex:1; background:#e0e0e0; color:#333; border:1px solid #ccc; }
 .attendance-buttons button.asistio { background:#2e7d32; color:white; }
-.attendance-buttons button.falto { background:#d32f2f; color:white; }
-
-/* Ejercicios */
-.exercise-card { background:white; border:1px solid #dbdbdb; border-radius:12px; margin-bottom:20px; padding:15px; display:flex; flex-direction:column; gap:8px; }
-.exercise-card img { max-width:100%; border-radius:8px; }
+.attendance-buttons button.falto { background:#c62828; color:white; }
