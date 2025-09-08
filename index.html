@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🏉 Entrenadores CDZ</title>
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🏉 Entrenadores CDZ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -16,7 +16,7 @@
     <select id="menuSelect" onchange="switchView()">
       <option value="players">Jugadores</option>
       <option value="exercises">Ejercicios</option>
-      <!-- Área Administración se añade solo para admin -->
+      <option value="admin">Área Administración</option>
     </select>
   </div>
 </header>
@@ -33,7 +33,7 @@
     <p id="authMsg"></p>
   </div>
 
-  <!-- APP Jugadores -->
+  <!-- APP -->
   <div id="app" style="display:none;">
     <div class="tabs">
       <button class="tabBtn" onclick="filterCategory('all')">Todas</button>
@@ -56,6 +56,7 @@
       <input type="tel" id="playerPhone" placeholder="Teléfono">
       <input type="text" id="playerLicense" placeholder="Nº Licencia">
       <input type="text" id="playerMoreInfo" placeholder="Más info">
+
       <select id="categorySelect">
         <option value="M8">M8</option>
         <option value="M10">M10</option>
@@ -72,9 +73,16 @@
     <div id="playersContainer"></div>
   </div>
 
-  <!-- APP Ejercicios -->
+  <!-- Área Ejercicios -->
   <div id="exercisesArea" style="display:none;">
     <h2>Ejercicios</h2>
+    <div class="tabs">
+      <button class="exerciseTabBtn" onclick="filterExercise('all')">Todos</button>
+      <button class="exerciseTabBtn" onclick="filterExercise('1')">1</button>
+      <button class="exerciseTabBtn" onclick="filterExercise('2')">2</button>
+      <button class="exerciseTabBtn" onclick="filterExercise('3')">3</button>
+    </div>
+
     <button id="toggleExerciseFormBtn">➕ Añadir ejercicio</button>
     <div id="addExerciseForm" style="display:none;">
       <input type="text" id="exerciseName" placeholder="Nombre del ejercicio">
@@ -82,14 +90,14 @@
       <input type="text" id="exerciseSpace" placeholder="Espacio">
       <input type="text" id="exercisePlayers" placeholder="Jugadores">
       <input type="text" id="exerciseMoreInfo" placeholder="Más info">
-      <input type="file" id="exerciseImage">
-      <select id="exerciseFilter">
+      <select id="exerciseCategory">
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
       </select>
       <button id="saveExerciseBtn">Guardar ejercicio</button>
     </div>
+
     <div id="exercisesContainer"></div>
   </div>
 
