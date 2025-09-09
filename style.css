@@ -20,22 +20,6 @@ button:hover { background:#1b5e20; }
 /* Inputs */
 input, select { width:100%; padding:10px; margin:6px 0; border:1px solid #dbdbdb; border-radius:6px; font-size:0.95em; }
 
-/* Text area */
-textarea {
-  width: 100%;
-  min-height: 80px;        /* altura inicial */
-  padding: 10px;
-  margin: 6px 0;
-  border: 1px solid #dbdbdb;
-  border-radius: 6px;
-  font-size: 16px;
-  line-height: 1.4;
-  resize: vertical;        /* el usuario puede agrandar */
-  white-space: pre-wrap;   /* respeta saltos de línea automáticos */
-  word-wrap: break-word;   /* corta palabras largas si no caben */
-  overflow-wrap: break-word;
-}
-
 /* AUTH BOX */
 #authBox { background:white; padding:20px; border-radius:12px; border:1px solid #dbdbdb; }
 #authBox h2 { margin-top:0; text-align:center; color:#2e7d32; }
