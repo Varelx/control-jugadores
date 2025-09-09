@@ -12,7 +12,12 @@
 <header>
   <img src="https://github.com/Varelx/control-jugadores/blob/main/cdz_arteixo_logo.png?raw=true" alt="Club Rugby Zalaeta">
   <h1>Entrenadores CDZ</h1>
-  <button id="darkModeToggle">🌓</button>
+  <div id="menuContainer" style="display:none;">
+    <select id="menuSelect" onchange="switchView()">
+      <option value="players">Jugadores</option>
+      <option value="admin">Área Administración</option>
+    </select>
+  </div>
 </header>
 
 <div class="container">
@@ -27,79 +32,54 @@
     <p id="authMsg"></p>
   </div>
 
-  <!-- Pages Container -->
-  <div id="pagesContainer" style="display:none;">
-
-    <!-- Página 1: Jugadores -->
-    <div class="page" id="pagePlayers">
-      <div class="tabs">
-        <button class="tabBtn" onclick="filterCategory('all')">Todas</button>
-        <button class="tabBtn" onclick="filterCategory('M8')">M8</button>
-        <button class="tabBtn" onclick="filterCategory('M10')">M10</button>
-        <button class="tabBtn" onclick="filterCategory('M12')">M12</button>
-        <button class="tabBtn" onclick="filterCategory('M14')">M14</button>
-        <button class="tabBtn" onclick="filterCategory('M16')">M16</button>
-        <button class="tabBtn" onclick="filterCategory('M18')">M18</button>
-        <button class="tabBtn" onclick="filterCategory('Fem')">Fem</button>
-        <button class="tabBtn" onclick="filterCategory('Masc')">Masc</button>
-      </div>
-
-      <button id="toggleFormBtn">➕ Añadir jugador</button>
-      <div id="addPlayerForm" style="display:none;">
-        <input type="text" id="playerName" placeholder="Nombre completo">
-        <input type="date" id="playerBirth">
-        <input type="text" id="playerDni" placeholder="DNI">
-        <textarea id="playerAddress" placeholder="Dirección"></textarea>
-        <input type="tel" id="playerPhone1" placeholder="Teléfono1">
-        <input type="tel" id="playerPhone2" placeholder="Teléfono2">
-        <input type="text" id="playerLicense" placeholder="Nº Licencia">
-        <textarea id="playerMoreInfo" placeholder="Más info"></textarea>
-
-        <select id="categorySelect">
-          <option value="M8">M8</option>
-          <option value="M10">M10</option>
-          <option value="M12">M12</option>
-          <option value="M14">M14</option>
-          <option value="M16">M16</option>
-          <option value="M18">M18</option>
-          <option value="Fem">Fem</option>
-          <option value="Masc">Masc</option>
-        </select>
-        <button id="savePlayerBtn">Guardar jugador</button>
-      </div>
-
-      <div id="playersContainer"></div>
+  <!-- APP -->
+  <div id="app" style="display:none;">
+    <div class="tabs">
+      <button class="tabBtn">Todas</button>
+      <button class="tabBtn">M8</button>
+      <button class="tabBtn">M10</button>
+      <button class="tabBtn">M12</button>
+      <button class="tabBtn">M14</button>
+      <button class="tabBtn">M16</button>
+      <button class="tabBtn">M18</button>
+      <button class="tabBtn">Fem</button>
+      <button class="tabBtn">Masc</button>
     </div>
 
-    <!-- Página 2: Ejercicios -->
-    <div class="page" id="pageExercises" style="display:none;">
-      <h2>Ejercicios</h2>
-      <button id="toggleExerciseFormBtn">➕ Añadir ejercicio</button>
-      <div id="addExerciseForm" style="display:none;">
-        <input type="text" id="exerciseName" placeholder="Nombre del ejercicio">
-        <textarea id="exerciseDescription" placeholder="Descripción"></textarea>
-        <button id="saveExerciseBtn">Guardar ejercicio</button>
-      </div>
-      <div id="exercisesContainer"></div>
+    <button id="toggleFormBtn">➕ Añadir jugador</button>
+    <div id="addPlayerForm" style="display:none;">
+      <input type="text" id="playerName" placeholder="Nombre completo">
+      <input type="date" id="playerBirth">
+      <input type="text" id="playerDni" placeholder="DNI">
+      <input type="text" id="playerAddress" placeholder="Dirección">
+      <input type="tel" id="playerPhone1" placeholder="Teléfono1">
+      <input type="tel" id="playerPhone2" placeholder="Teléfono2">
+      <input type="text" id="playerLicense" placeholder="Nº Licencia">
+      <input type="text" id="playerMoreInfo" placeholder="Más info">
+
+      <select id="categorySelect">
+        <option value="M8">M8</option>
+        <option value="M10">M10</option>
+        <option value="M12">M12</option>
+        <option value="M14">M14</option>
+        <option value="M16">M16</option>
+        <option value="M18">M18</option>
+        <option value="Fem">Fem</option>
+        <option value="Masc">Masc</option>
+      </select>
+      <button id="savePlayerBtn">Guardar jugador</button>
     </div>
 
-    <!-- Página 3: Subir Archivos -->
-    <div class="page" id="pageFiles" style="display:none;">
-      <h2>Subir Archivos</h2>
-      <div id="dropZone">Arrastra y suelta archivos aquí o haz clic</div>
-      <input type="file" id="fileInput" multiple style="display:none;">
-      <div id="filesList"></div>
-    </div>
-
+    <div id="playersContainer"></div>
   </div>
 
-</div>
+  <!-- Área Admin -->
+  <div id="adminArea" style="display:none;">
+    <h2>Área de Administración</h2>
+    <button id="adminBtn">Mostrar solicitudes pendientes</button>
+    <div id="requestsList" style="margin-top:10px;"></div>
+  </div>
 
-<!-- Barra inferior -->
-<div id="bottomNav">
-  <button onclick="showPage('pagePlayers')">🏉 Jugadores</button>
-  <button onclick="showPage('pageExercises')">🏋️ Ejercicios</button>
-  <button onclick="showPage('pageFiles')">📂 Archivos</button>
 </div>
 
 <script type="module" src="app.js"></script>
