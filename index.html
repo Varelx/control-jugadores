@@ -15,7 +15,6 @@
   <div id="menuContainer" style="display:none;">
     <select id="menuSelect" onchange="switchView()">
       <option value="players">Jugadores</option>
-      <option value="exercises">Ejercicios</option>
       <option value="admin">Área Administración</option>
     </select>
   </div>
@@ -33,7 +32,7 @@
     <p id="authMsg"></p>
   </div>
 
-  <!-- APP: JUGADORES -->
+  <!-- APP -->
   <div id="app" style="display:none;">
     <div class="tabs">
       <button class="tabBtn" onclick="filterCategory('all')">Todas</button>
@@ -71,27 +70,6 @@
     </div>
 
     <div id="playersContainer"></div>
-  </div>
-
-  <!-- APP: EJERCICIOS -->
-  <div id="exercisesArea" style="display:none;">
-    <div class="tabs">
-      <button class="tabBtn" onclick="filterExercise('1')">1</button>
-      <button class="tabBtn" onclick="filterExercise('2')">2</button>
-      <button class="tabBtn" onclick="filterExercise('3')">3</button>
-    </div>
-
-    <button id="toggleExerciseFormBtn">➕ Añadir ejercicio</button>
-    <div id="addExerciseForm" style="display:none;">
-      <input type="text" id="exerciseName" placeholder="Nombre del ejercicio">
-      <input type="text" id="exerciseMaterial" placeholder="Material">
-      <input type="text" id="exerciseSpace" placeholder="Espacio">
-      <input type="text" id="exercisePlayers" placeholder="Jugadores">
-      <input type="text" id="exerciseMoreInfo" placeholder="Más info">
-      <button id="saveExerciseBtn">Guardar ejercicio</button>
-    </div>
-
-    <div id="exercisesContainer"></div>
   </div>
 
   <!-- Área Admin -->
