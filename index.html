@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🏉 Entrenadores CDZ</title>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏉 Entrenadores CDZ</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -33,7 +33,7 @@
     <p id="authMsg"></p>
   </div>
 
-  <!-- APP -->
+  <!-- APP: JUGADORES -->
   <div id="app" style="display:none;">
     <div class="tabs">
       <button class="tabBtn" onclick="filterCategory('all')">Todas</button>
@@ -73,14 +73,12 @@
     <div id="playersContainer"></div>
   </div>
 
-  <!-- Área Ejercicios -->
+  <!-- APP: EJERCICIOS -->
   <div id="exercisesArea" style="display:none;">
-    <h2>Ejercicios</h2>
     <div class="tabs">
-      <button class="exerciseTabBtn" onclick="filterExercise('all')">Todos</button>
-      <button class="exerciseTabBtn" onclick="filterExercise('1')">1</button>
-      <button class="exerciseTabBtn" onclick="filterExercise('2')">2</button>
-      <button class="exerciseTabBtn" onclick="filterExercise('3')">3</button>
+      <button class="tabBtn" onclick="filterExercise('1')">1</button>
+      <button class="tabBtn" onclick="filterExercise('2')">2</button>
+      <button class="tabBtn" onclick="filterExercise('3')">3</button>
     </div>
 
     <button id="toggleExerciseFormBtn">➕ Añadir ejercicio</button>
@@ -90,11 +88,6 @@
       <input type="text" id="exerciseSpace" placeholder="Espacio">
       <input type="text" id="exercisePlayers" placeholder="Jugadores">
       <input type="text" id="exerciseMoreInfo" placeholder="Más info">
-      <select id="exerciseCategory">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-      </select>
       <button id="saveExerciseBtn">Guardar ejercicio</button>
     </div>
 
