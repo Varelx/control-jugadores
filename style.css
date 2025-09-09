@@ -23,16 +23,17 @@ input, select { width:100%; padding:10px; margin:6px 0; border:1px solid #dbdbdb
 /* Text area */
 textarea {
   width: 100%;
-  min-height: 80px;        /* más alto por defecto */
+  min-height: 80px;        /* altura inicial */
   padding: 10px;
   margin: 6px 0;
   border: 1px solid #dbdbdb;
   border-radius: 6px;
-  font-size: 1em;
-  resize: vertical;        /* el usuario puede agrandar hacia abajo */
+  font-size: 16px;
   line-height: 1.4;
-  white-space: pre-wrap;   /* saltos de línea */
-  word-wrap: break-word;   /* evita desbordes en palabras largas */
+  resize: vertical;        /* el usuario puede agrandar */
+  white-space: pre-wrap;   /* respeta saltos de línea automáticos */
+  word-wrap: break-word;   /* corta palabras largas si no caben */
+  overflow-wrap: break-word;
 }
 
 /* AUTH BOX */
