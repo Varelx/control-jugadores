@@ -22,56 +22,53 @@
 
 <div class="container">
 
-  <!-- AUTH -->
-  <div id="authBox">
-    <h2>Entrenadores</h2>
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Contraseña">
-    <button id="loginBtn">Iniciar sesión</button>
-    <button id="registerBtn">Registrarse</button>
-    <p id="authMsg"></p>
+<!-- APP -->
+<div id="app" style="display:none;">
+
+  <!-- Tabs de categorías -->
+  <div class="tabs">
+    <button class="tabBtn" onclick="filterCategory('all')">Todas</button>
+    <button class="tabBtn" onclick="filterCategory('M8')">M8</button>
+    <button class="tabBtn" onclick="filterCategory('M10')">M10</button>
+    <button class="tabBtn" onclick="filterCategory('M12')">M12</button>
+    <button class="tabBtn" onclick="filterCategory('M14')">M14</button>
+    <button class="tabBtn" onclick="filterCategory('M16')">M16</button>
+    <button class="tabBtn" onclick="filterCategory('M18')">M18</button>
+    <button class="tabBtn" onclick="filterCategory('Fem')">Fem</button>
+    <button class="tabBtn" onclick="filterCategory('Masc')">Masc</button>
   </div>
 
-  <!-- APP -->
-  <div id="app" style="display:none;">
-    <div class="tabs">
-      <button class="tabBtn">Todas</button>
-      <button class="tabBtn">M8</button>
-      <button class="tabBtn">M10</button>
-      <button class="tabBtn">M12</button>
-      <button class="tabBtn">M14</button>
-      <button class="tabBtn">M16</button>
-      <button class="tabBtn">M18</button>
-      <button class="tabBtn">Fem</button>
-      <button class="tabBtn">Masc</button>
-    </div>
+  <!-- Botón para ver asistencias de la categoría seleccionada -->
+  <button id="viewAttendanceBtn" style="margin-bottom:10px;">📊 Ver asistencias</button>
 
-    <button id="toggleFormBtn">➕ Añadir jugador</button>
-    <div id="addPlayerForm" style="display:none;">
-      <input type="text" id="playerName" placeholder="Nombre completo">
-      <input type="date" id="playerBirth">
-      <input type="text" id="playerDni" placeholder="DNI">
-      <input type="text" id="playerAddress" placeholder="Dirección">
-      <input type="tel" id="playerPhone1" placeholder="Teléfono1">
-      <input type="tel" id="playerPhone2" placeholder="Teléfono2">
-      <input type="text" id="playerLicense" placeholder="Nº Licencia">
-      <input type="text" id="playerMoreInfo" placeholder="Más info">
+  <!-- Formulario para añadir jugador -->
+  <button id="toggleFormBtn">➕ Añadir jugador</button>
+  <div id="addPlayerForm" style="display:none;">
+    <input type="text" id="playerName" placeholder="Nombre completo">
+    <input type="date" id="playerBirth">
+    <input type="text" id="playerDni" placeholder="DNI">
+    <textarea id="playerAddress" placeholder="Dirección"></textarea>
+    <textarea id="playerPhone1" placeholder="Teléfono1"></textarea>
+    <textarea id="playerPhone2" placeholder="Teléfono2"></textarea>
+    <input type="text" id="playerLicense" placeholder="Nº Licencia">
+    <textarea id="playerMoreInfo" placeholder="Más info"></textarea>
 
-      <select id="categorySelect">
-        <option value="M8">M8</option>
-        <option value="M10">M10</option>
-        <option value="M12">M12</option>
-        <option value="M14">M14</option>
-        <option value="M16">M16</option>
-        <option value="M18">M18</option>
-        <option value="Fem">Fem</option>
-        <option value="Masc">Masc</option>
-      </select>
-      <button id="savePlayerBtn">Guardar jugador</button>
-    </div>
-
-    <div id="playersContainer"></div>
+    <select id="categorySelect">
+      <option value="M8">M8</option>
+      <option value="M10">M10</option>
+      <option value="M12">M12</option>
+      <option value="M14">M14</option>
+      <option value="M16">M16</option>
+      <option value="M18">M18</option>
+      <option value="Fem">Fem</option>
+      <option value="Masc">Masc</option>
+    </select>
+    <button id="savePlayerBtn">Guardar jugador</button>
   </div>
+
+  <!-- Contenedor de jugadores / asistencias -->
+  <div id="playersContainer"></div>
+</div>
 
   <!-- Área Admin -->
   <div id="adminArea" style="display:none;">
