@@ -1,141 +1,167 @@
-// Firebase App
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+// ---------------- FIREBASE ----------------
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
-// TODO: Cambia esto por tu config de Firebase
+// Tu configuración Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyC-DTX0x8Bebk6Z1TEkyyVD3K4jOPVSmLA",
-  authDomain: "control-jugadores-64ae6.firebaseapp.com",
-  databaseURL: "https://control-jugadores-64ae6-default-rtdb.firebaseio.com",
-  projectId: "control-jugadores-64ae6",
-  storageBucket: "control-jugadores-64ae6.firebasestorage.app",
-  messagingSenderId: "345003884874",
-  appId: "1:345003884874:web:51308a576a636b5a9741b3",
-  measurementId: "G-1RR2CLEPL1"
+  apiKey: "TU_API_KEY",
+  authDomain: "TU_PROYECTO.firebaseapp.com",
+  databaseURL: "https://TU_PROYECTO.firebaseio.com",
+  projectId: "TU_PROYECTO",
+  storageBucket: "TU_PROYECTO.appspot.com",
+  messagingSenderId: "XXX",
+  appId: "XXX"
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getDatabase(app);
+const auth = getAuth(app);
 
-// ---------------- AUTH ----------------
-document.getElementById('loginBtn').addEventListener('click', () => {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => document.getElementById('authMsg').innerText = "✅ Login correcto")
-    .catch(err => document.getElementById('authMsg').innerText = err.message);
-});
-
-document.getElementById('registerBtn').addEventListener('click', () => {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  createUserWithEmailAndPassword(auth, email, password)
-    .then(() => document.getElementById('authMsg').innerText = "✅ Usuario creado")
-    .catch(err => document.getElementById('authMsg').innerText = err.message);
-});
-
-onAuthStateChanged(auth, user => {
-  if (user) {
-    document.getElementById('authBox').style.display = "none";
-    document.getElementById('app').style.display = "block";
-    document.getElementById('menuContainer').style.display = "block";
-    loadPlayers();
-    loadExercises();
-  } else {
-    document.getElementById('authBox').style.display = "block";
-    document.getElementById('app').style.display = "none";
-    document.getElementById('menuContainer').style.display = "none";
-    document.getElementById('exercisesArea').style.display = "none";
-    document.getElementById('adminArea').style.display = "none";
-  }
-});
+// ---------------- UI ----------------
+const authBox = document.getElementById("authBox");
+const appBox = document.getElementById("app");
+const exercisesArea = document.getElementById("exercisesArea");
+const adminArea = document.getElementById("adminArea");
+const menuContainer = document.getElementById("menuContainer");
+const menuSelect = document.getElementById("menuSelect");
+const playersContainer = document.getElementById("playersContainer");
+const exercisesContainer = document.getElementById("exercisesContainer");
 
 // ---------------- SWITCH VIEW ----------------
 window.switchView = function(){
-  const val=document.getElementById('menuSelect').value;
-  document.getElementById('app').style.display=(val==='players')?'block':'none';
-  document.getElementById('adminArea').style.display=(val==='admin')?'block':'none';
-  document.getElementById('exercisesArea').style.display=(val==='exercises')?'block':'none';
-}
+  const val = menuSelect.value;
+  appBox.style.display = (val === "players") ? "block" : "none";
+  exercisesArea.style.display = (val === "exercises") ? "block" : "none";
+  adminArea.style.display = (val === "admin") ? "block" : "none";
+};
+
+// ---------------- TOGGLE DETAILS ----------------
+window.toggleDetails = function(id){
+  const details = document.getElementById("details-" + id);
+  if(details.style.display === "block"){
+    details.style.display = "none";
+  } else {
+    details.style.display = "block";
+  }
+};
+
+// ---------------- LOGIN / REGISTER ----------------
+document.getElementById("loginBtn").addEventListener("click", () => {
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
+  signInWithEmailAndPassword(auth, email, pass)
+    .catch(err => document.getElementById("authMsg").textContent = err.message);
+});
+
+document.getElementById("registerBtn").addEventListener("click", () => {
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
+  createUserWithEmailAndPassword(auth, email, pass)
+    .catch(err => document.getElementById("authMsg").textContent = err.message);
+});
+
+// ---------------- AUTH STATE ----------------
+onAuthStateChanged(auth, user => {
+  if(user){
+    authBox.style.display = "none";
+    menuContainer.style.display = "block";
+    loadPlayers();
+    loadExercises();
+  } else {
+    authBox.style.display = "block";
+    menuContainer.style.display = "none";
+    appBox.style.display = "none";
+    exercisesArea.style.display = "none";
+    adminArea.style.display = "none";
+  }
+});
 
 // ---------------- PLAYERS ----------------
-document.getElementById('toggleFormBtn').addEventListener('click',()=>{
-  const form=document.getElementById('addPlayerForm');
-  form.style.display=form.style.display==="none"?"block":"none";
-});
-
-document.getElementById('savePlayerBtn').addEventListener('click',()=>{
-  const player={
-    name:document.getElementById('playerName').value,
-    birth:document.getElementById('playerBirth').value,
-    dni:document.getElementById('playerDni').value,
-    address:document.getElementById('playerAddress').value,
-    phone:document.getElementById('playerPhone').value,
-    license:document.getElementById('playerLicense').value,
-    more:document.getElementById('playerMoreInfo').value,
-    category:document.getElementById('categorySelect').value
-  };
-  const playersRef=ref(db,"players");
-  push(playersRef,player);
-});
-
 function loadPlayers(){
-  const playersRef=ref(db,"players");
-  onValue(playersRef,snap=>{
-    const cont=document.getElementById('playersContainer');
-    cont.innerHTML="";
-    snap.forEach(child=>{
-      const p=child.val();
-      const div=document.createElement('div');
-      div.className="card";
-      div.innerHTML=`<strong>${p.name}</strong> (${p.category})`;
-      cont.appendChild(div);
+  const playersRef = ref(db, "players");
+  onValue(playersRef, snap => {
+    playersContainer.innerHTML = "";
+    snap.forEach(child => {
+      const player = child.val();
+      const id = child.key;
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <strong>${player.name}</strong> (${player.category || ""})
+        <button onclick="toggleDetails('${id}')">Ver / Editar</button>
+        <div id="details-${id}" class="player-details">
+          <div class="form-row"><small>Nombre:</small><input value="${player.name || ""}"></div>
+          <div class="form-row"><small>Nacimiento:</small><input value="${player.birth || ""}"></div>
+          <div class="form-row"><small>DNI:</small><input value="${player.dni || ""}"></div>
+          <div class="form-row"><small>Dirección:</small><input value="${player.address || ""}"></div>
+          <div class="form-row"><small>Teléfono:</small><input value="${player.phone || ""}"></div>
+          <div class="form-row"><small>Licencia:</small><input value="${player.license || ""}"></div>
+          <div class="form-row"><small>Info:</small><input value="${player.moreInfo || ""}"></div>
+        </div>
+      `;
+      playersContainer.appendChild(card);
     });
   });
 }
 
 // ---------------- EXERCISES ----------------
-document.getElementById('toggleExerciseFormBtn').addEventListener('click',()=>{
-  const form=document.getElementById('addExerciseForm');
-  form.style.display=form.style.display==="none"?"block":"none";
-});
-
-document.getElementById('saveExerciseBtn').addEventListener('click',()=>{
-  const ex={
-    name:document.getElementById('exerciseName').value,
-    material:document.getElementById('exerciseMaterial').value,
-    space:document.getElementById('exerciseSpace').value,
-    players:document.getElementById('exercisePlayers').value,
-    more:document.getElementById('exerciseMoreInfo').value,
-    category:document.getElementById('exerciseCategory').value
-  };
-  const exRef=ref(db,"exercises");
-  push(exRef,ex);
-});
-
 function loadExercises(){
-  const exRef=ref(db,"exercises");
-  onValue(exRef,snap=>{
-    const cont=document.getElementById('exercisesContainer');
-    cont.innerHTML="";
-    snap.forEach(child=>{
-      const e=child.val();
-      const div=document.createElement('div');
-      div.className="exercise-card";
-      div.innerHTML=`<strong>${e.name}</strong> (Cat: ${e.category})`;
-      cont.appendChild(div);
+  const exRef = ref(db, "exercises");
+  onValue(exRef, snap => {
+    exercisesContainer.innerHTML = "";
+    snap.forEach(child => {
+      const ex = child.val();
+      const id = child.key;
+      const card = document.createElement("div");
+      card.className = "exercise-card";
+      card.innerHTML = `
+        <strong>${ex.name}</strong>
+        <div>Material: ${ex.material || ""}</div>
+        <div>Espacio: ${ex.space || ""}</div>
+        <div>Jugadores: ${ex.players || ""}</div>
+        <div>Info: ${ex.moreInfo || ""}</div>
+      `;
+      exercisesContainer.appendChild(card);
     });
   });
 }
 
-// ---------------- FILTERS ----------------
-window.filterCategory=function(cat){
-  const cards=document.querySelectorAll('#playersContainer .card');
-  cards.forEach(c=>c.style.display=(cat==="all"||c.innerText.includes(cat))?"block":"none");
-}
-window.filterExercise=function(cat){
-  const cards=document.querySelectorAll('#exercisesContainer .exercise-card');
-  cards.forEach(c=>c.style.display=(cat==="all"||c.innerText.includes(cat))?"block":"none");
-}
+// ---------------- ADD PLAYER ----------------
+document.getElementById("toggleFormBtn").addEventListener("click", () => {
+  const f = document.getElementById("addPlayerForm");
+  f.style.display = (f.style.display === "block") ? "none" : "block";
+});
+
+document.getElementById("savePlayerBtn").addEventListener("click", () => {
+  const data = {
+    name: document.getElementById("playerName").value,
+    birth: document.getElementById("playerBirth").value,
+    dni: document.getElementById("playerDni").value,
+    address: document.getElementById("playerAddress").value,
+    phone: document.getElementById("playerPhone").value,
+    license: document.getElementById("playerLicense").value,
+    moreInfo: document.getElementById("playerMoreInfo").value,
+    category: document.getElementById("categorySelect").value
+  };
+  push(ref(db, "players"), data);
+  document.getElementById("addPlayerForm").style.display = "none";
+});
+
+// ---------------- ADD EXERCISE ----------------
+document.getElementById("toggleExerciseFormBtn").addEventListener("click", () => {
+  const f = document.getElementById("addExerciseForm");
+  f.style.display = (f.style.display === "block") ? "none" : "block";
+});
+
+document.getElementById("saveExerciseBtn").addEventListener("click", () => {
+  const data = {
+    name: document.getElementById("exerciseName").value,
+    material: document.getElementById("exerciseMaterial").value,
+    space: document.getElementById("exerciseSpace").value,
+    players: document.getElementById("exercisePlayers").value,
+    moreInfo: document.getElementById("exerciseMoreInfo").value
+  };
+  push(ref(db, "exercises"), data);
+  document.getElementById("addExerciseForm").style.display = "none";
+});
