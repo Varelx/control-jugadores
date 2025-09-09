@@ -210,17 +210,66 @@ window.deletePlayer = function(id){ if(confirm('¿Seguro?')) remove(ref(db,'play
 
 // ---------------- FILTRO CATEGORÍAS ----------------
 window.filterCategory = function(cat){
-  currentCategory = cat==='Todas'?'all':cat;
-  document.querySelectorAll('.tabBtn').forEach(btn => btn.classList.remove('active'));
-  const btn = Array.from(document.querySelectorAll('.tabBtn')).find(b=>b.textContent===cat);
-  if(btn) btn.classList.add('active');
-  loadPlayers();
-}
+  // Convertimos "Todas" a "all"
+  currentCategory = (cat === 'Todas' || cat === 'all') ? 'all' : cat;
 
-// Añadimos evento a los botones de las tabs
-document.querySelectorAll('.tabBtn').forEach(btn=>{
-  btn.addEventListener('click', ()=>filterCategory(btn.textContent));
+  // Quitamos la clase "active" de todos los botones
+  document.querySelectorAll('.tabBtn').forEach(btn => btn.classList.remove('active'));
+
+  // Añadimos la clase "active" al botón correspondiente
+  const btn = Array.from(document.querySelectorAll('.tabBtn')).find(b => b.textContent === cat);
+  if(btn) btn.classList.add('active');
+
+  // Recargamos los jugadores filtrando por categoría
+  loadPlayers();
+};
+
+// ---------------- EVENTO BOTONES TABS ----------------
+document.querySelectorAll('.tabBtn').forEach(btn => {
+  btn.addEventListener('click', () => filterCategory(btn.textContent));
 });
+
+// ---------------- VER ASISTENCIAS ----------------
+document.getElementById('viewAttendanceBtn').addEventListener('click', () => {
+  showAttendanceByCategory(currentCategory);
+});
+
+// Función para mostrar asistencia por categoría
+function showAttendanceByCategory(cat){
+  const container = document.getElementById('playersContainer');
+  container.innerHTML = ''; // Limpiamos contenedor
+
+  get(ref(db,'players')).then(snap => {
+    snap.forEach(child => {
+      const p = child.val();
+      const id = child.key;
+
+      if(cat === 'all' || p.category === cat){
+        const div = document.createElement('div');
+        div.className = 'card';
+
+        let attendanceRows = '';
+        if(p.attendance){
+          for(const date in p.attendance){
+            attendanceRows += `<tr>
+                                 <td>${p.name}</td>
+                                 <td>${date}</td>
+                                 <td>${p.attendance[date] ? '✅' : '❌'}</td>
+                               </tr>`;
+          }
+        }
+
+        div.innerHTML = `
+          <strong>${p.name}</strong> - ${p.category}
+          <table style="width:100%; margin-top:6px; border-collapse:collapse;">
+            <tr><th>Jugador</th><th>Fecha</th><th>Asistencia</th></tr>
+            ${attendanceRows}
+          </table>`;
+        container.appendChild(div);
+      }
+    });
+  });
+}
 
 // ---------------- SWITCH VIEWS ----------------
 window.switchView = function(){
