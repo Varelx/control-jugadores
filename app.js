@@ -189,3 +189,15 @@ window.markAttendance = function(id,presente){
   const today = new Date().toISOString().slice(0,10);
   set(ref(db,'players/'+id+'/attendance/'+today),presente);
 }
+
+// --- FILTRADO DE CATEGORÍAS ---
+window.filterCategory = function(cat){
+  currentCategory = cat;
+  // Quita la clase "active" de todos los botones
+  document.querySelectorAll('.tabBtn').forEach(btn => btn.classList.remove('active'));
+  // Pon la clase "active" al botón seleccionado
+  const btn = Array.from(document.querySelectorAll('.tabBtn')).find(b => b.textContent === cat);
+  if(btn) btn.classList.add('active');
+  // Vuelve a cargar los jugadores filtrando por categoría
+  loadPlayers();
+};
