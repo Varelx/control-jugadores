@@ -63,6 +63,25 @@ function showMsg(msg,type='info'){
   authMsg.style.color = type==='error' ? 'red' : 'green';
 }
 
+// Listener para acceder al área admin haciendo click en el logo
+const headerLogo = document.getElementById('headerLogo');
+
+headerLogo.addEventListener('click', () => {
+  const user = auth.currentUser;
+  if (!user) return alert('No has iniciado sesión');
+  
+  get(ref(db,'users/'+user.uid)).then(snap => {
+    const data = snap.val();
+    if (data && data.role === 'admin') {
+      // Mostrar área admin
+      document.getElementById('app').style.display = 'none';
+      document.getElementById('adminArea').style.display = 'block';
+    } else {
+      alert('No tienes permisos de administrador');
+    }
+  });
+});
+
 // ---------------- ADMIN ----------------
 document.getElementById('adminBtn').addEventListener('click', () => {
   const user = auth.currentUser;
