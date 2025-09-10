@@ -1,6 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
-  
-  // ---------------- FIREBASE ----------------
+// ---------------- FIREBASE ----------------
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, set, push, onValue, get, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
@@ -213,25 +211,37 @@ window.deletePlayer = function(id){ if(confirm('¿Seguro?')) remove(ref(db,'play
 // ---------------- FILTRO CATEGORÍAS ----------------
 window.filterCategory = function(cat){
   currentCategory = (cat === 'Todas' || cat === 'all') ? 'all' : cat;
+
+  // Quitamos la clase "active" de todos los botones
   document.querySelectorAll('.tabBtn').forEach(btn => btn.classList.remove('active'));
+
+  // Añadimos la clase "active" al botón correspondiente
   const btn = Array.from(document.querySelectorAll('.tabBtn')).find(b => b.textContent === cat);
   if(btn) btn.classList.add('active');
+
+  // Recargamos los jugadores filtrando por categoría
   loadPlayers();
 };
 
-// Añadimos evento a los botones de las tabs
-document.querySelectorAll('.tabBtn').forEach(btn => {
-  btn.addEventListener('click', () => filterCategory(btn.textContent));
+// ---------------- EVENTOS ----------------
+document.addEventListener('DOMContentLoaded', () => {
+  // Botones de categorías
+  document.querySelectorAll('.tabBtn').forEach(btn => {
+    btn.addEventListener('click', () => filterCategory(btn.textContent));
+  });
+
+  // Botón ver asistencias
+  const viewBtn = document.getElementById('viewAttendanceBtn');
+  if(viewBtn){
+    viewBtn.addEventListener('click', () => showAttendanceByCategory(currentCategory));
+  }
 });
 
 // ---------------- VER ASISTENCIAS ----------------
-document.getElementById('viewAttendanceBtn')?.addEventListener('click', () => {
-  showAttendanceByCategory(currentCategory);
-});
-
 function showAttendanceByCategory(cat){
   const container = document.getElementById('playersContainer');
   container.innerHTML = '';
+
   get(ref(db,'players')).then(snap => {
     snap.forEach(child => {
       const p = child.val();
@@ -267,5 +277,3 @@ window.switchView = function(){
   document.getElementById('app').style.display = (val==='players')?'block':'none';
   document.getElementById('adminArea').style.display = (val==='admin')?'block':'none';
 }
-
-});
