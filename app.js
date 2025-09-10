@@ -1,4 +1,6 @@
-// ---------------- FIREBASE ----------------
+document.addEventListener('DOMContentLoaded', () => {
+  
+  // ---------------- FIREBASE ----------------
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, set, push, onValue, get, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
@@ -31,7 +33,7 @@ document.getElementById('registerBtn').addEventListener('click', () => {
     .catch(e => showMsg(e.message,'error'));
 });
 
-document.getElementById('loginBtn').addEventListener('click', () => {
+document.getElementById('loginBtn').Listener('click', () => {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   signInWithEmailAndPassword(auth,email,password)
@@ -265,3 +267,5 @@ window.switchView = function(){
   document.getElementById('app').style.display = (val==='players')?'block':'none';
   document.getElementById('adminArea').style.display = (val==='admin')?'block':'none';
 }
+
+});
